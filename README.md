@@ -2,6 +2,8 @@
 
 For tracking product prices from e-comm sites
 
+Check [WIKI](https://github.com/mluksic/product-price-tracker/wiki) for more info
+
 ## Dependencies
 
 -   [Go](https://go.dev/doc/install)

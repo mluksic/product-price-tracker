@@ -1,4 +1,4 @@
-package main
+package scraper
 
 import (
 	"fmt"
@@ -24,14 +24,10 @@ func newScraper() *Scraper {
 	}
 }
 
-func main() {
+func Scrape(productNames []string) ([]Product, error) {
 	var (
-		products     []Product
-		urls         []string
-		productNames = []string{
-			"apple tv",
-			"google pixel 7",
-		}
+		products []Product
+		urls     []string
 	)
 
 	scraper := newScraper()
@@ -59,14 +55,11 @@ func main() {
 	for _, url := range urls {
 		err := scraper.c.Visit(url)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 	}
 
-	// Display results
-	for _, product := range products {
-		fmt.Println(product)
-	}
+	return products, nil
 }
 
 func extractProduct(h *colly.HTMLElement) Product {
@@ -90,5 +83,6 @@ func getSearchUrls(productNames []string) []string {
 		url := "https://www.amazon.de/s?k=" + queryParam
 		urls = append(urls, url)
 	}
+
 	return urls
 }

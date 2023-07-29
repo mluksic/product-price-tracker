@@ -63,16 +63,15 @@ func Scrape(productNames []string) ([]Product, error) {
 }
 
 func extractProduct(h *colly.HTMLElement) Product {
-	priceStr := h.ChildText("span.a-price-whole")
+	priceStr := strings.Join(strings.Split(h.ChildText("span.a-price-whole"), ","), "")
 	price, _ := strconv.Atoi(priceStr)
 	name := h.ChildText("span.a-text-normal")
 
-	product := Product{
+	return Product{
 		price: price,
 		url:   h.Request.URL.String(),
 		name:  name,
 	}
-	return product
 }
 
 func getSearchUrls(productNames []string) []string {

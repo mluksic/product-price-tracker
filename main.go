@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/mluksic/product-price-tracker/cmd/scraper"
+	"github.com/mluksic/product-price-tracker/scraper"
 	"log"
 )
 

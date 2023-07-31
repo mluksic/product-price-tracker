@@ -3,16 +3,11 @@ package scraper
 import (
 	"fmt"
 	"github.com/gocolly/colly"
+	"github.com/mluksic/product-price-tracker/types"
 	"log"
 	"strconv"
 	"strings"
 )
-
-type Product struct {
-	name  string
-	price int
-	url   string
-}
 
 type Scraper struct {
 	c *colly.Collector
@@ -24,9 +19,9 @@ func newScraper() *Scraper {
 	}
 }
 
-func Scrape(productNames []string) ([]Product, error) {
+func Scrape(productNames []string) ([]types.Product, error) {
 	var (
-		products []Product
+		products []types.Product
 		urls     []string
 	)
 
@@ -62,15 +57,15 @@ func Scrape(productNames []string) ([]Product, error) {
 	return products, nil
 }
 
-func extractProduct(h *colly.HTMLElement) Product {
+func extractProduct(h *colly.HTMLElement) types.Product {
 	priceStr := strings.Join(strings.Split(h.ChildText("span.a-price-whole"), ","), "")
 	price, _ := strconv.Atoi(priceStr)
 	name := h.ChildText("span.a-text-normal")
 
-	return Product{
-		price: price,
-		url:   h.Request.URL.String(),
-		name:  name,
+	return types.Product{
+		Price: price,
+		Url:   h.Request.URL.String(),
+		Name:  name,
 	}
 }
 

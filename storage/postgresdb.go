@@ -9,6 +9,10 @@ import (
 
 type PostgresStorage struct{}
 
+func NewPostgresStorage() *PostgresStorage {
+	return &PostgresStorage{}
+}
+
 func (db *PostgresStorage) Connect() {
 	dbUrl := "postgres://tracker:tracker@localhost:5432/tracker"
 	conn, err := pgx.Connect(context.Background(), dbUrl)

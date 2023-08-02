@@ -1,8 +1,14 @@
 build:
-	@go build -o bin/main
+	go build -o bin/main
 
 run: build
-	@./bin/main
+	./bin/main
 
 test:
-	@go test -v ./...
+	go test -v ./...
+
+tidy:
+	go fmt
+	go mod tidy
+
+.PHONY: build, run, test, tidy

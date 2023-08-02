@@ -18,6 +18,5 @@ func NewServer(listenAddr string, store storage.Storer) *Server {
 }
 
 func (s *Server) Start() error {
-	s.storage.Connect()
 	return http.ListenAndServe(s.listenAddr, nil)
 }

@@ -8,13 +8,11 @@ import (
 	"os"
 )
 
-type PostgresStorage struct{}
-
-func NewPostgresStorage() *PostgresStorage {
-	return &PostgresStorage{}
+type PostgresStorage struct {
+	db *pgx.Conn
 }
 
-func (db *PostgresStorage) Connect() {
+func NewPostgresStorage() *PostgresStorage {
 	dbUrl := fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
 		viper.Get("DB_USERNAME"),
 		viper.Get("DB_PASSWORD"),
@@ -29,15 +27,11 @@ func (db *PostgresStorage) Connect() {
 	}
 	defer conn.Close(context.Background())
 
-	var greeting string
-	err = conn.QueryRow(context.Background(), "select 'Hello, world!'").Scan(&greeting)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
-		os.Exit(1)
+	return &PostgresStorage{
+		db: conn,
 	}
-
-	fmt.Println(greeting)
 }
+
 func (db *PostgresStorage) Get() {
 
 }

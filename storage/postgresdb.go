@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/jackc/pgx/v5"
+	"github.com/mluksic/product-price-tracker/types"
 	"github.com/spf13/viper"
 	"os"
 )
@@ -25,22 +26,40 @@ func NewPostgresStorage() *PostgresStorage {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)
 	}
-	defer conn.Close(context.Background())
+	//defer conn.Close(context.Background())
 
 	return &PostgresStorage{
 		db: conn,
 	}
 }
 
-func (db *PostgresStorage) Get() {
+func (p PostgresStorage) GetProductPrices(pId int) ([]types.ProductPrice, error) {
+	rows, err := p.db.Query(context.Background(), "select pp.name, pp.price from product_price pp where product_id = $1", pId)
+	if err != nil {
+		return nil, err
+	}
 
+	prices := []types.ProductPrice{}
+	for rows.Next() {
+		var price types.ProductPrice
+		err := rows.Scan(&price.Name, &price.Price)
+		if err != nil {
+			return nil, err
+		}
+		prices = append(prices, price)
+
+		fmt.Println("prices found", price)
+	}
+
+	return prices, nil
 }
-func (db *PostgresStorage) Insert() {
 
+func (p PostgresStorage) CreateProductPrice() error {
+	//TODO implement me
+	panic("implement me")
 }
-func (db *PostgresStorage) Update() {
 
-}
-func (db *PostgresStorage) Delete() {
-
+func (p PostgresStorage) DeleteProductPrice() error {
+	//TODO implement me
+	panic("implement me")
 }

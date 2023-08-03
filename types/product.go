@@ -18,12 +18,14 @@ type ProductPrice struct {
 	Name      string
 	ProductId int
 	Price     int
+	FetchedAt string
 }
 
-func NewProductPrice(name string, productId int, price int) *ProductPrice {
+func NewProductPrice(name string, productId int, price int, fetchedAt string) *ProductPrice {
 	return &ProductPrice{
 		Name:      name,
 		ProductId: productId,
 		Price:     price,
+		FetchedAt: fetchedAt,
 	}
 }

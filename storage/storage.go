@@ -1,12 +1,9 @@
 package storage
 
-type Storer interface {
-	Get()
-	Insert()
-	Modifier
-}
+import "github.com/mluksic/product-price-tracker/types"
 
-type Modifier interface {
-	Update()
-	Delete()
+type Storer interface {
+	GetProductPrices(pId int) ([]types.ProductPrice, error)
+	CreateProductPrice() error
+	DeleteProductPrice() error
 }

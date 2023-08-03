@@ -54,9 +54,10 @@ func (p PostgresStorage) GetProductPrices(pId int) ([]types.ProductPrice, error)
 	return prices, nil
 }
 
-func (p PostgresStorage) CreateProductPrice() error {
-	//TODO implement me
-	panic("implement me")
+func (p PostgresStorage) CreateProductPrice(productPrice *types.ProductPrice) error {
+	_, err := p.db.Exec(context.Background(), "insert into product_price(name, price, fetched_at, product_id) values ($1, $2, $3, $4)", productPrice.Name, productPrice.Price, productPrice.FetchedAt, productPrice.ProductId)
+	
+	return err
 }
 
 func (p PostgresStorage) DeleteProductPrice() error {

@@ -1,5 +1,7 @@
 package types
 
+import "time"
+
 type Product struct {
 	Name  string
 	Price int
@@ -18,10 +20,10 @@ type ProductPrice struct {
 	Name      string
 	ProductId int
 	Price     int
-	FetchedAt string
+	FetchedAt time.Time
 }
 
-func NewProductPrice(name string, productId int, price int, fetchedAt string) *ProductPrice {
+func NewProductPrice(name string, productId int, price int, fetchedAt time.Time) *ProductPrice {
 	return &ProductPrice{
 		Name:      name,
 		ProductId: productId,

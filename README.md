@@ -44,28 +44,34 @@ For Mac via Brew:
 $ brew install goose
 ```
 
+For convenience, you can set the Goose DB driver and DB string
+```bash
+export GOOSE_DRIVER=postgres
+export GOOSE_DBSTRING=postgresql://goose:password@127.0.0.1:8092/go_migrations?sslmode=disable
+```
+
 ### Check DB status
 
 ```bash
-$ goose -dir storage/migrations postgres "postgresql://tracker:tracker@localhost:5432/tracker?sslmode=disable" status
+$ goose -dir storage/migrations status
 ```
 
 ### Create new migration file
 
 ```bash
-$ goose -dir storage/migrations postgres "postgresql://tracker:tracker@localhost:5432/tracker?sslmode=disable" create create_product_price sql
+$ goose -dir storage/migrations create create_product_price sql
 ```
 
 ### Run migration
 
 ```bash
-$ goose -dir storage/migrations postgres "postgresql://tracker:tracker@localhost:5432/tracker?sslmode=disable" up
+$ goose -dir storage/migrations up
 ```
 
 ### Rollback migration
 
 ```bash
-$ goose -dir storage/migrations postgres "postgresql://tracker:tracker@localhost:5432/tracker?sslmode=disable" down
+$ goose -dir storage/migrations down
 ```
 
 ## Deploy

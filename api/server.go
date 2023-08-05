@@ -44,14 +44,21 @@ func (s *Server) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var p types.CreateProductRequest
-	err := json.NewDecoder(r.Body).Decode(&p)
+	var req types.CreateProductRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	_, err = w.Write([]byte(p.Name))
+	p := types.NewProduct(req.Name)
+	err = s.storage.CreateProduct(p)
+	if err != nil {
+		http.Error(w, "Unable to create product "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

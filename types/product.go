@@ -10,10 +10,10 @@ type Product struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func NewProduct(name string, isTracked bool) *Product {
+func NewProduct(name string) *Product {
 	return &Product{
 		Name:      name,
-		IsTracked: isTracked,
+		IsTracked: true,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}

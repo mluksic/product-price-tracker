@@ -56,7 +56,13 @@ func (p PostgresStorage) GetProductPrices(pId int) ([]types.ProductPrice, error)
 
 func (p PostgresStorage) CreateProductPrice(productPrice *types.ProductPrice) error {
 	_, err := p.db.Exec(context.Background(), "insert into product_price(name, price, fetched_at, product_id) values ($1, $2, $3, $4)", productPrice.Name, productPrice.Price, productPrice.FetchedAt, productPrice.ProductId)
-	
+
+	return err
+}
+
+func (p PostgresStorage) CreateProduct(product *types.Product) error {
+	_, err := p.db.Exec(context.Background(), "insert into product (name, is_tracked, created_at, updated_at) values ($1,$2,$3,$4)", product.Name, product.IsTracked, product.CreatedAt, product.UpdatedAt)
+
 	return err
 }
 

@@ -26,13 +26,19 @@ Copy, rename, and adjust [.env.template](./.env.template) file so that the app c
 
 ### Run the following command to start the app
 ```bash
-$ go run main.go
+$ make run
 ```
 
 ## Build
 
 ```bash
-$ go build -o main
+$ make build
+```
+
+## Tidy
+
+```bash
+$ make tidy
 ```
 
 ## Using Goose to handle DB migrations

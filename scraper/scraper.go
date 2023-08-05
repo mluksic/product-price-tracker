@@ -19,9 +19,9 @@ func newScraper() *Scraper {
 	}
 }
 
-func Scrape(productNames []string) ([]types.Product, error) {
+func Scrape(productNames []string) ([]types.ProductVariant, error) {
 	var (
-		products []types.Product
+		products []types.ProductVariant
 		urls     []string
 	)
 
@@ -57,12 +57,12 @@ func Scrape(productNames []string) ([]types.Product, error) {
 	return products, nil
 }
 
-func extractProduct(h *colly.HTMLElement) types.Product {
+func extractProduct(h *colly.HTMLElement) types.ProductVariant {
 	priceStr := strings.Join(strings.Split(h.ChildText("span.a-price-whole"), ","), "")
 	price, _ := strconv.Atoi(priceStr)
 	name := h.ChildText("span.a-text-normal")
 
-	return types.Product{
+	return types.ProductVariant{
 		Price: price,
 		Url:   h.Request.URL.String(),
 		Name:  name,

@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"github.com/mluksic/product-price-tracker/storage"
+	"github.com/mluksic/product-price-tracker/types"
 	"net/http"
 )
 
@@ -20,6 +21,8 @@ func NewServer(listenAddr string, store storage.Storer) *Server {
 
 func (s *Server) Start() error {
 	http.HandleFunc("/product_prices", s.handleGetProductPrices)
+	http.HandleFunc("/products", s.handleCreateProduct)
+
 	return http.ListenAndServe(s.listenAddr, nil)
 }
 
@@ -31,6 +34,26 @@ func (s *Server) handleGetProductPrices(w http.ResponseWriter, r *http.Request) 
 
 	err = json.NewEncoder(w).Encode(prices)
 	if err != nil {
+		return
+	}
+}
+
+func (s *Server) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
+	if "POST" != r.Method {
+		http.Error(w, "Invalid method", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var p types.CreateProductRequest
+	err := json.NewDecoder(r.Body).Decode(&p)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	_, err = w.Write([]byte(p.Name))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }

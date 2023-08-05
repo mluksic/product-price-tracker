@@ -13,3 +13,7 @@ func NewProduct(name string, price int, url string) *Product {
 		Url:   url,
 	}
 }
+
+type CreateProductRequest struct {
+	Name string `json:"name"`
+}

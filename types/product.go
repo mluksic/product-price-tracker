@@ -1,14 +1,21 @@
 package types
 
+import "time"
+
 type Product struct {
-	Name      string `json:"name"`
-	IsTracked bool   `json:"is_tracked"`
+	ID        int       `json:"id"`
+	Name      string    `json:"name"`
+	IsTracked bool      `json:"is_tracked"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func NewProduct(name string, isTracked bool) *Product {
 	return &Product{
 		Name:      name,
 		IsTracked: isTracked,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 }
 

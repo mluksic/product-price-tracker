@@ -30,7 +30,7 @@
     <tr>
         <td>{{.Name}}</td>
         <td>{{.Price | IntToFloat}} €</td>
-        <td>{{.FetchedAt}}</td>
+        <td>{{.FetchedAt.Format "2006-01-02 15:04:05" }}</td>
     </tr>
     {{end}}
 </table>

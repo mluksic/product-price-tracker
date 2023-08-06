@@ -18,7 +18,15 @@
     </style>
 </head>
 <script src="https://unpkg.com/htmx.org@1.9.4" integrity="sha384-zUfuhFKKZCbHTY6aRR46gxiqszMk5tcHjsVFxnUo8VMus4kHGVdIYVbOYYNlKmHV" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
 <body>
+
+<h1>Track new product</h1>
+<form hx-post="/products" hx-target="#response" hx-ext="json-enc">
+    <label>Name: <input type="text" name="name"></label>
+    <input type="submit" value="Submit">
+</form>
+<div id="response"></div>
 
 <h1>Product List</h1>
 <table>

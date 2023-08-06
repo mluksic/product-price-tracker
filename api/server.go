@@ -106,8 +106,15 @@ func (s *Server) handleIndexPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	products, _ := s.storage.GetProductPrices(1)
-	err = tmpl.Execute(w, products)
+	pPrices, _ := s.storage.GetProductPrices(1)
+	products, _ := s.storage.GetProducts()
+
+	tmplData := map[string]any{
+		"product_prices": pPrices,
+		"products":       products,
+	}
+
+	err = tmpl.Execute(w, tmplData)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

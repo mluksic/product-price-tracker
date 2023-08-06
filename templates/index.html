@@ -28,14 +28,34 @@
 </form>
 <div id="response"></div>
 
-<h1>Product List</h1>
+<h1>Products</h1>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Is tracked?</th>
+        <th>Created at</th>
+        <th>Updated at</th>
+    </tr>
+    {{range .products}}
+    <tr>
+        <td>{{.ID}}</td>
+        <td>{{.Name}}</td>
+        <td>{{.IsTracked}}</td>
+        <td>{{.CreatedAt.Format "2006-01-02 15:04:05" }}</td>
+        <td>{{.UpdatedAt.Format "2006-01-02 15:04:05" }}</td>
+    </tr>
+    {{end}}
+</table>
+
+<h1>Product Prices List</h1>
 <table>
     <tr>
         <th>Name</th>
         <th>Price</th>
         <th>Fetched at</th>
     </tr>
-    {{range .}}
+    {{range .product_prices}}
     <tr>
         <td>{{.Name}}</td>
         <td>{{.Price | IntToFloat}} €</td>

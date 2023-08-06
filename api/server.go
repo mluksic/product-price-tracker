@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/mluksic/product-price-tracker/storage"
 	"github.com/mluksic/product-price-tracker/types"
+	"html/template"
 	"net/http"
 )
 
@@ -22,6 +23,8 @@ func NewServer(listenAddr string, store storage.Storer) *Server {
 func (s *Server) Start() error {
 	http.HandleFunc("/product_prices", s.handleGetProductPrices)
 	http.HandleFunc("/products", s.handleCreateProduct)
+
+	http.HandleFunc("/", s.handleIndexPage)
 
 	return http.ListenAndServe(s.listenAddr, nil)
 }
@@ -59,6 +62,17 @@ func (s *Server) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = json.NewEncoder(w).Encode(p)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (s *Server) handleIndexPage(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles("templates/index.html"))
+
+	products, _ := s.storage.GetProductPrices(1)
+	err := tmpl.Execute(w, products)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

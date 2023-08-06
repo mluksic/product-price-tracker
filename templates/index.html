@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Product Price Tracker</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 50%;
+            margin: 20px auto;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Product List</h1>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Fetched at</th>
+    </tr>
+    {{range .}}
+    <tr>
+        <td>{{.Name}}</td>
+        <td>{{.Price}}</td>
+        <td>{{.FetchedAt}}</td>
+    </tr>
+    {{end}}
+</table>
+
+
+</body>
+</html>

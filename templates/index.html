@@ -17,53 +17,69 @@
         }
     </style>
 </head>
-<script src="https://unpkg.com/htmx.org@1.9.4" integrity="sha384-zUfuhFKKZCbHTY6aRR46gxiqszMk5tcHjsVFxnUo8VMus4kHGVdIYVbOYYNlKmHV" crossorigin="anonymous"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/htmx.org@1.9.4"
+        integrity="sha384-zUfuhFKKZCbHTY6aRR46gxiqszMk5tcHjsVFxnUo8VMus4kHGVdIYVbOYYNlKmHV"
+        crossorigin="anonymous"></script>
 <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
 <body>
 
-<h1>Track new product</h1>
-<form hx-post="/products" hx-target="#response" hx-ext="json-enc">
-    <label>Name: <input type="text" name="name"></label>
-    <input type="submit" value="Submit">
-</form>
-<div id="response"></div>
+<body class="bg-gray-100">
+<div class="container mx-auto p-8">
+    <h1 class="text-3xl font-semibold mb-4">Track new product</h1>
+    <form class="mb-6" hx-post="/products" hx-target="#response" hx-ext="json-enc">
+        <label class="block mb-2">
+            Name:
+            <input type="text" name="name"
+                   class="block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </label>
+        <input type="submit" value="Submit" class="px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600">
+    </form>
+    <div id="response"></div>
 
-<h1>Products</h1>
-<table>
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Is tracked?</th>
-        <th>Created at</th>
-        <th>Updated at</th>
-    </tr>
-    {{range .products}}
-    <tr>
-        <td>{{.ID}}</td>
-        <td>{{.Name}}</td>
-        <td>{{.IsTracked}}</td>
-        <td>{{.CreatedAt.Format "2006-01-02 15:04:05" }}</td>
-        <td>{{.UpdatedAt.Format "2006-01-02 15:04:05" }}</td>
-    </tr>
-    {{end}}
-</table>
+    <h1 class="text-3xl font-semibold my-8">Products</h1>
+    <table class="w-full table-auto border-collapse">
+        <thead>
+        <tr>
+            <th class="px-4 py-2 bg-gray-200 text-left">ID</th>
+            <th class="px-4 py-2 bg-gray-200 text-left">Name</th>
+            <th class="px-4 py-2 bg-gray-200 text-left">Is tracked?</th>
+            <th class="px-4 py-2 bg-gray-200 text-left">Created at</th>
+            <th class="px-4 py-2 bg-gray-200 text-left">Updated at</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .products}}
+        <tr class="border-t border-gray-200">
+            <td class="px-4 py-2">{{.ID}}</td>
+            <td class="px-4 py-2">{{.Name}}</td>
+            <td class="px-4 py-2">{{.IsTracked}}</td>
+            <td class="px-4 py-2">{{.CreatedAt.Format "2006-01-02 15:04:05" }}</td>
+            <td class="px-4 py-2">{{.UpdatedAt.Format "2006-01-02 15:04:05" }}</td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
 
-<h1>Product Prices List</h1>
-<table>
-    <tr>
-        <th>Name</th>
-        <th>Price</th>
-        <th>Fetched at</th>
-    </tr>
-    {{range .product_prices}}
-    <tr>
-        <td>{{.Name}}</td>
-        <td>{{.Price | IntToFloat}} €</td>
-        <td>{{.FetchedAt.Format "2006-01-02 15:04:05" }}</td>
-    </tr>
-    {{end}}
-</table>
-
-
+    <h1 class="text-3xl font-semibold my-8">Product Prices List</h1>
+    <table class="w-full table-auto border-collapse">
+        <thead>
+        <tr>
+            <th class="px-4 py-2 bg-gray-200 text-left">Name</th>
+            <th class="px-4 py-2 bg-gray-200 text-left">Price</th>
+            <th class="px-4 py-2 bg-gray-200 text-left">Fetched at</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .product_prices}}
+        <tr class="border-t border-gray-200">
+            <td class="px-4 py-2">{{.Name}}</td>
+            <td class="px-4 py-2">{{.Price | IntToFloat}} €</td>
+            <td class="px-4 py-2">{{.FetchedAt.Format "2006-01-02 15:04:05" }}</td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+</div>
 </body>
 </html>

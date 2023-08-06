@@ -23,7 +23,7 @@ func NewServer(listenAddr string, store storage.Storer) *Server {
 
 func (s *Server) Start() error {
 	http.HandleFunc("/product_prices", s.handleGetProductPrices)
-	http.HandleFunc("/products", s.handleCreateProduct)
+	http.HandleFunc("/products", s.handleProducts)
 
 	http.HandleFunc("/", s.handleIndexPage)
 
@@ -42,12 +42,20 @@ func (s *Server) handleGetProductPrices(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-func (s *Server) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
-	if "POST" != r.Method {
-		http.Error(w, "Invalid method", http.StatusMethodNotAllowed)
+func (s *Server) handleProducts(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		s.handleGetProducts(w, r)
+		break
+	case http.MethodPost:
+		s.handleCreateProduct(w, r)
+		break
+	default:
 		return
 	}
+}
 
+func (s *Server) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 	var req types.CreateProductRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
@@ -65,6 +73,22 @@ func (s *Server) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 	err = json.NewEncoder(w).Encode(p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (s *Server) handleGetProducts(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	products, err := s.storage.GetProducts()
+	if err != nil {
+		http.Error(w, "Unable to get products: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(&products)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 }

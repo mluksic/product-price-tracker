@@ -29,7 +29,7 @@
     {{range .}}
     <tr>
         <td>{{.Name}}</td>
-        <td>{{.Price}}</td>
+        <td>{{.Price | IntToFloat}} €</td>
         <td>{{.FetchedAt}}</td>
     </tr>
     {{end}}

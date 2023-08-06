@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/mluksic/product-price-tracker/storage"
 	"github.com/mluksic/product-price-tracker/types"
+	"github.com/mluksic/product-price-tracker/util"
 	"html/template"
 	"net/http"
 )
@@ -69,10 +70,20 @@ func (s *Server) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleIndexPage(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("templates/index.html"))
+	var tmplFile = "index.html"
+	// add template functions
+	funcMap := template.FuncMap{
+		"IntToFloat": util.IntToFloat,
+	}
+
+	tmpl, err := template.New(tmplFile).Funcs(funcMap).ParseFiles("templates/" + tmplFile)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	products, _ := s.storage.GetProductPrices(1)
-	err := tmpl.Execute(w, products)
+	err = tmpl.Execute(w, products)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

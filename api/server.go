@@ -39,61 +39,46 @@ func (s *Server) Start() error {
 }
 
 func (s *Server) handleGetProductPrices(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
 	productId, err := getId(r)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		WriteJson(w, http.StatusBadRequest, ApiError{Error: err.Error()})
 		return
 	}
 	prices, err := s.storage.GetProductPrices(productId)
 	if err != nil {
-		w.Write([]byte(err.Error()))
-	}
-
-	err = json.NewEncoder(w).Encode(prices)
-	if err != nil {
-		http.Error(w, "Unable to encode response to JSON", http.StatusInternalServerError)
+		WriteJson(w, http.StatusInternalServerError, ApiError{Error: "Unable to fetch product prices"})
 		return
 	}
+
+	WriteJson(w, http.StatusOK, prices)
 }
 
 func (s *Server) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 	var req types.CreateProductRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		WriteJson(w, http.StatusBadRequest, ApiError{Error: err.Error()})
 		return
 	}
 
 	p := types.NewProduct(req.Name)
 	err = s.storage.CreateProduct(p)
 	if err != nil {
-		http.Error(w, "Unable to create product "+err.Error(), http.StatusInternalServerError)
+		WriteJson(w, http.StatusInternalServerError, ApiError{Error: "Unable to create product: " + err.Error()})
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(p)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	WriteJson(w, http.StatusCreated, p)
 }
 
 func (s *Server) handleGetProducts(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
 	products, err := s.storage.GetProducts()
 	if err != nil {
-		http.Error(w, "Unable to get products: "+err.Error(), http.StatusBadRequest)
+		WriteJson(w, http.StatusBadRequest, ApiError{Error: "Unable to get products: " + err.Error()})
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(&products)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+	WriteJson(w, http.StatusOK, products)
 }
 
 func (s *Server) handleIndexPage(w http.ResponseWriter, r *http.Request) {
@@ -122,6 +107,21 @@ func (s *Server) handleIndexPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func WriteJson(w http.ResponseWriter, status int, msg any) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+
+	err := json.NewEncoder(w).Encode(msg)
+	if err != nil {
+		http.Error(w, "Unable to write JSON response: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+type ApiError struct {
+	Error string `json:"error"`
 }
 
 func getId(r *http.Request) (int, error) {

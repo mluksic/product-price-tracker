@@ -2,11 +2,14 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/go-chi/chi/v5"
 	"github.com/mluksic/product-price-tracker/storage"
 	"github.com/mluksic/product-price-tracker/types"
 	"github.com/mluksic/product-price-tracker/util"
 	"html/template"
 	"net/http"
+	"strconv"
 )
 
 type Server struct {
@@ -22,35 +25,35 @@ func NewServer(listenAddr string, store storage.Storer) *Server {
 }
 
 func (s *Server) Start() error {
-	http.HandleFunc("/product_prices", s.handleGetProductPrices)
-	http.HandleFunc("/products", s.handleProducts)
+	r := chi.NewRouter()
+
+	r.Get("/", s.handleIndexPage)
+
+	r.Get("/products", s.handleGetProducts)
+	r.Post("/products", s.handleCreateProduct)
+	r.Get("/products/{id}", s.handleGetProductPrices)
 
 	http.HandleFunc("/", s.handleIndexPage)
 
-	return http.ListenAndServe(s.listenAddr, nil)
+	return http.ListenAndServe(s.listenAddr, r)
 }
 
 func (s *Server) handleGetProductPrices(w http.ResponseWriter, r *http.Request) {
-	prices, err := s.storage.GetProductPrices(1)
+	w.Header().Set("Content-Type", "application/json")
+
+	productId, err := getId(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	prices, err := s.storage.GetProductPrices(productId)
 	if err != nil {
 		w.Write([]byte(err.Error()))
 	}
 
 	err = json.NewEncoder(w).Encode(prices)
 	if err != nil {
-		return
-	}
-}
-
-func (s *Server) handleProducts(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		s.handleGetProducts(w, r)
-		break
-	case http.MethodPost:
-		s.handleCreateProduct(w, r)
-		break
-	default:
+		http.Error(w, "Unable to encode response to JSON", http.StatusInternalServerError)
 		return
 	}
 }
@@ -119,4 +122,15 @@ func (s *Server) handleIndexPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func getId(r *http.Request) (int, error) {
+	param := chi.URLParam(r, "id")
+
+	id, err := strconv.Atoi(param)
+	if err != nil {
+		return id, fmt.Errorf("invalid id param given %s", param)
+	}
+
+	return id, nil
 }

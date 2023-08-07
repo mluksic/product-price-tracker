@@ -7,6 +7,7 @@ Check [WIKI](https://github.com/mluksic/product-price-tracker/wiki) for more inf
 ## Dependencies
 
 - [Go](https://go.dev/doc/install)
+- [go-chi](https://go-chi.io/#/pages/getting_started) router
 - [Docker Compose](https://docs.docker.com/compose/install/) (optional) - for Postgres DB
 - [Goose](https://github.com/pressly/goose) - for handling DB migrations
 

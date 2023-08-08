@@ -22,7 +22,6 @@
         integrity="sha384-zUfuhFKKZCbHTY6aRR46gxiqszMk5tcHjsVFxnUo8VMus4kHGVdIYVbOYYNlKmHV"
         crossorigin="anonymous"></script>
 <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
-<body>
 
 <body class="bg-gray-100">
 <div class="container mx-auto p-8">
@@ -46,6 +45,7 @@
             <th class="px-4 py-2 bg-gray-200 text-left">Is tracked?</th>
             <th class="px-4 py-2 bg-gray-200 text-left">Created at</th>
             <th class="px-4 py-2 bg-gray-200 text-left">Updated at</th>
+            <th class="px-4 py-2 bg-gray-200 text-left">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -56,30 +56,17 @@
             <td class="px-4 py-2">{{.IsTracked}}</td>
             <td class="px-4 py-2">{{.CreatedAt.Format "2006-01-02 15:04:05" }}</td>
             <td class="px-4 py-2">{{.UpdatedAt.Format "2006-01-02 15:04:05" }}</td>
+            <td class="px-4 py-3">
+                <button hx-get="/products/{{.ID}}" hx-target="#product-prices" class="px-4 py-2 bg-indigo-500 text-white text-sm rounded-md hover:bg-indigo-600" data-product-id="{{.ID}}">Show prices</button>
+            </td>
         </tr>
         {{end}}
         </tbody>
     </table>
 
-    <h1 class="text-3xl font-semibold my-8">Product Prices List</h1>
-    <table class="w-full table-auto border-collapse">
-        <thead>
-        <tr>
-            <th class="px-4 py-2 bg-gray-200 text-left">Name</th>
-            <th class="px-4 py-2 bg-gray-200 text-left">Price</th>
-            <th class="px-4 py-2 bg-gray-200 text-left">Fetched at</th>
-        </tr>
-        </thead>
-        <tbody>
-        {{range .product_prices}}
-        <tr class="border-t border-gray-200">
-            <td class="px-4 py-2">{{.Name}}</td>
-            <td class="px-4 py-2">{{.Price | IntToFloat}} €</td>
-            <td class="px-4 py-2">{{.FetchedAt.Format "2006-01-02 15:04:05" }}</td>
-        </tr>
-        {{end}}
-        </tbody>
-    </table>
+    <div id="product-prices">
+    </div>
+
 </div>
 </body>
 </html>

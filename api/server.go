@@ -48,7 +48,29 @@ func (s *Server) handleGetProductPrices(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	WriteJson(w, http.StatusOK, prices)
+	var tmplFile = "product_prices.html"
+	// add template functions
+	funcMap := template.FuncMap{
+		"IntToFloat": util.IntToFloat,
+	}
+
+	tmpl, err := template.New(tmplFile).Funcs(funcMap).ParseFiles("templates/" + tmplFile)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	tmplData := map[string]any{
+		"prices": prices,
+	}
+
+	err = tmpl.Execute(w, tmplData)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	
+	//WriteJson(w, http.StatusOK, prices)
 }
 
 func (s *Server) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
@@ -92,12 +114,9 @@ func (s *Server) handleIndexPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pPrices, _ := s.storage.GetProductPrices(1)
 	products, _ := s.storage.GetProducts()
-
 	tmplData := map[string]any{
-		"product_prices": pPrices,
-		"products":       products,
+		"products": products,
 	}
 
 	err = tmpl.Execute(w, tmplData)

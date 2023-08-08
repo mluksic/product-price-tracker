@@ -33,8 +33,6 @@ func (s *Server) Start() error {
 	r.Post("/products", s.handleCreateProduct)
 	r.Get("/products/{id}", s.handleGetProductPrices)
 
-	http.HandleFunc("/", s.handleIndexPage)
-
 	return http.ListenAndServe(s.listenAddr, r)
 }
 

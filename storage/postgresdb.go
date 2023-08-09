@@ -34,7 +34,7 @@ func NewPostgresStorage() *PostgresStorage {
 }
 
 func (p PostgresStorage) GetProductPrices(pId int) ([]types.ProductPrice, error) {
-	rows, err := p.db.Query(context.Background(), "select pp.name, pp.price, pp.fetched_at from product_price pp where product_id = $1", pId)
+	rows, err := p.db.Query(context.Background(), "select pp.name, pp.price, pp.fetched_at, pp.url from product_price pp where product_id = $1", pId)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (p PostgresStorage) GetProductPrices(pId int) ([]types.ProductPrice, error)
 	prices := []types.ProductPrice{}
 	for rows.Next() {
 		var price types.ProductPrice
-		err := rows.Scan(&price.Name, &price.Price, &price.FetchedAt)
+		err := rows.Scan(&price.Name, &price.Price, &price.Url, &price.FetchedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -55,7 +55,7 @@ func (p PostgresStorage) GetProductPrices(pId int) ([]types.ProductPrice, error)
 }
 
 func (p PostgresStorage) CreateProductPrice(productPrice *types.ProductPrice) error {
-	_, err := p.db.Exec(context.Background(), "insert into product_price(name, price, fetched_at, product_id) values ($1, $2, $3, $4)", productPrice.Name, productPrice.Price, productPrice.FetchedAt, productPrice.ProductId)
+	_, err := p.db.Exec(context.Background(), "insert into product_price(name, price, url, fetched_at, product_id) values ($1, $2, $3, $4, $5)", productPrice.Name, productPrice.Price, productPrice.Url, productPrice.FetchedAt, productPrice.ProductId)
 
 	return err
 }

@@ -61,10 +61,11 @@ func extractProduct(h *colly.HTMLElement) types.ProductVariant {
 	priceStr := strings.Join(strings.Split(h.ChildText("span.a-price-whole"), ","), "")
 	price, _ := strconv.Atoi(priceStr)
 	name := h.ChildText("span.a-text-normal")
+	url := h.ChildAttr("a.a-link-normal", "href")
 
 	return types.ProductVariant{
 		Price: price,
-		Url:   h.Request.URL.String(),
+		Url:   "https://www.amazon.de" + url,
 		Name:  name,
 	}
 }

@@ -145,7 +145,7 @@ func (s *Server) handleScrapeProductPrices(w http.ResponseWriter, r *http.Reques
 
 	// save scraped products into DB
 	for _, productVariant := range productVariants {
-		productPrice := types.NewProductPrice(productVariant.Name, product.ID, productVariant.Price, time.Now())
+		productPrice := types.NewProductPrice(productVariant.Name, product.ID, productVariant.Price, productVariant.Url, time.Now())
 		err := s.storage.CreateProductPrice(productPrice)
 		if err != nil {
 			WriteJson(w, http.StatusInternalServerError, ApiError{Error: "There was an saving scraped prices for product into the DB: " + err.Error()})

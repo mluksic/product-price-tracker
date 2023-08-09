@@ -4,12 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-chi/chi/v5"
+	"github.com/mluksic/product-price-tracker/scraper"
 	"github.com/mluksic/product-price-tracker/storage"
 	"github.com/mluksic/product-price-tracker/types"
 	"github.com/mluksic/product-price-tracker/util"
 	"html/template"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type Server struct {
@@ -32,6 +34,7 @@ func (s *Server) Start() error {
 	r.Get("/products", s.handleGetProducts)
 	r.Post("/products", s.handleCreateProduct)
 	r.Get("/products/{id}", s.handleGetProductPrices)
+	r.Post("/products/{id}/scrape", s.handleScrapeProductPrices)
 
 	return http.ListenAndServe(s.listenAddr, r)
 }
@@ -124,6 +127,33 @@ func (s *Server) handleIndexPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func (s *Server) handleScrapeProductPrices(w http.ResponseWriter, r *http.Request) {
+	id, _ := getId(r)
+	product, err := s.storage.GetProduct(id)
+	if err != nil {
+		WriteJson(w, http.StatusBadRequest, ApiError{Error: "There was an error retrieving the product from DB: " + err.Error()})
+		return
+	}
+
+	productVariants, err := scraper.Scrape([]string{product.Name})
+	if err != nil {
+		WriteJson(w, http.StatusInternalServerError, ApiError{Error: "There was an error scraping the product: " + err.Error()})
+		return
+	}
+
+	// save scraped products into DB
+	for _, productVariant := range productVariants {
+		productPrice := types.NewProductPrice(productVariant.Name, product.ID, productVariant.Price, time.Now())
+		err := s.storage.CreateProductPrice(productPrice)
+		if err != nil {
+			WriteJson(w, http.StatusInternalServerError, ApiError{Error: "There was an saving scraped prices for product into the DB: " + err.Error()})
+			return
+		}
+	}
+
+	WriteJson(w, http.StatusOK, map[string]string{"message": "successfully scraped product prices"})
 }
 
 func WriteJson(w http.ResponseWriter, status int, msg any) {

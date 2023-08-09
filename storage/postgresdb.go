@@ -86,6 +86,24 @@ func (p PostgresStorage) GetProducts() ([]types.Product, error) {
 	return products, nil
 }
 
+func (p PostgresStorage) GetProduct(id int) (types.Product, error) {
+	row, err := p.db.Query(context.Background(), "select id, name, is_tracked, created_at, updated_at from product where id = $1", id)
+	if err != nil {
+		return types.Product{}, err
+	}
+
+	var product types.Product
+
+	for row.Next() {
+		err = row.Scan(&product.ID, &product.Name, &product.IsTracked, &product.CreatedAt, &product.UpdatedAt)
+		if err != nil {
+			return types.Product{}, err
+		}
+	}
+
+	return product, nil
+}
+
 func (p PostgresStorage) DeleteProductPrice() error {
 	//TODO implement me
 	panic("implement me")

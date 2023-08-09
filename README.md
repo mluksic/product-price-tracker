@@ -54,7 +54,7 @@ $ brew install goose
 For convenience, you can set the Goose DB driver and DB string
 ```bash
 export GOOSE_DRIVER=postgres
-export GOOSE_DBSTRING=postgresql://goose:password@127.0.0.1:8092/go_migrations?sslmode=disable
+export GOOSE_DBSTRING=postgresql://tracker:tracker@127.0.0.1:5432/tracker?sslmode=disable
 ```
 
 ### Check DB status

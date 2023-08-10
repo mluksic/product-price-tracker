@@ -24,15 +24,22 @@ func NewScraper(storer storage.Storer) *Scraper {
 }
 
 func RunScraperPeriodically() {
-	ticker := time.NewTicker(15 * time.Second)
-	defer ticker.Stop()
+	ticker := time.NewTicker(1 * time.Hour)
+	//defer ticker.Stop()
 
-	for {
-		select {
-		case <-ticker.C:
-			ScrapeAndSave()
+	// Creating channel using make
+	tickerChan := make(chan bool)
+
+	go func() {
+		for {
+			select {
+			case <-tickerChan:
+				return
+			case <-ticker.C:
+				ScrapeAndSave()
+			}
 		}
-	}
+	}()
 }
 
 func ScrapeAndSave() {

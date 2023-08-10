@@ -14,13 +14,7 @@ type PostgresStorage struct {
 }
 
 func NewPostgresStorage() *PostgresStorage {
-	dbUrl := fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
-		viper.Get("DB_USERNAME"),
-		viper.Get("DB_PASSWORD"),
-		viper.Get("DB_HOST"),
-		viper.Get("DB_PORT"),
-		viper.Get("DB_DATABASE"),
-	)
+	dbUrl := fmt.Sprintf("%s", viper.Get("DB_URL"))
 	conn, err := pgx.Connect(context.Background(), dbUrl)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)

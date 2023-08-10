@@ -31,10 +31,17 @@ func (s *Server) Start() error {
 
 	r.Get("/", s.handleIndexPage)
 
-	r.Get("/products", s.handleGetProducts)
-	r.Post("/products", s.handleCreateProduct)
-	r.Get("/products/{id}", s.handleGetProductPrices)
-	r.Post("/products/{id}/scrape", s.handleScrapeProductPrices)
+	// routes for "products" resource
+	r.Route("/products", func(r chi.Router) {
+		r.Get("/", s.handleGetProducts)
+		r.Post("/", s.handleCreateProduct)
+
+		// routes for "products/{id}"
+		r.Route("/{id}", func(r chi.Router) {
+			r.Get("/", s.handleGetProductPrices)
+			r.Post("/scrape", s.handleScrapeProductPrices)
+		})
+	})
 
 	return http.ListenAndServe(s.listenAddr, r)
 }

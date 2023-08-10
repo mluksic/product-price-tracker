@@ -47,7 +47,7 @@ func (s *Server) handleGetProductPrices(w http.ResponseWriter, r *http.Request) 
 	}
 	prices, err := s.storage.GetProductPrices(productId)
 	if err != nil {
-		WriteJson(w, http.StatusInternalServerError, ApiError{Error: "Unable to fetch product prices"})
+		WriteJson(w, http.StatusInternalServerError, ApiError{Error: "Unable to fetch product prices: " + err.Error()})
 		return
 	}
 

@@ -42,7 +42,7 @@ func (p PostgresStorage) GetProductPrices(pId int) ([]types.ProductPrice, error)
 	prices := []types.ProductPrice{}
 	for rows.Next() {
 		var price types.ProductPrice
-		err := rows.Scan(&price.Name, &price.Price, &price.Url, &price.FetchedAt)
+		err := rows.Scan(&price.Name, &price.Price, &price.FetchedAt, &price.Url)
 		if err != nil {
 			return nil, err
 		}

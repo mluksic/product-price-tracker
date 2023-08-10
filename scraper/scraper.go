@@ -3,20 +3,64 @@ package scraper
 import (
 	"fmt"
 	"github.com/gocolly/colly"
+	"github.com/mluksic/product-price-tracker/storage"
 	"github.com/mluksic/product-price-tracker/types"
 	"log"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Scraper struct {
-	c *colly.Collector
+	c       *colly.Collector
+	storage storage.Storer
 }
 
-func newScraper() *Scraper {
+func NewScraper(storer storage.Storer) *Scraper {
 	return &Scraper{
-		c: colly.NewCollector(),
+		c:       colly.NewCollector(),
+		storage: storer,
 	}
+}
+
+func RunScraperPeriodically() {
+	ticker := time.NewTicker(15 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			ScrapeAndSave()
+		}
+	}
+}
+
+func ScrapeAndSave() {
+	store := storage.NewPostgresStorage()
+	scraper := NewScraper(store)
+
+	products, err := scraper.storage.GetProducts()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	for _, product := range products {
+		productVariants, err := Scrape([]string{product.Name})
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+
+		// save scraped products into DB
+		for _, productVariant := range productVariants {
+			productPrice := types.NewProductPrice(productVariant.Name, product.ID, productVariant.Price, productVariant.Url, time.Now())
+			err := store.CreateProductPrice(productPrice)
+			if err != nil {
+				log.Fatal(err.Error())
+			}
+		}
+	}
+
+	fmt.Println("Scraped and saved product prices to the DB...")
 }
 
 func Scrape(productNames []string) ([]types.ProductVariant, error) {
@@ -25,7 +69,8 @@ func Scrape(productNames []string) ([]types.ProductVariant, error) {
 		urls     []string
 	)
 
-	scraper := newScraper()
+	store := storage.NewPostgresStorage()
+	scraper := NewScraper(store)
 
 	urls = getSearchUrls(productNames)
 

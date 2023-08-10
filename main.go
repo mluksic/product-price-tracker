@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/mluksic/product-price-tracker/api"
+	"github.com/mluksic/product-price-tracker/scraper"
 	"github.com/mluksic/product-price-tracker/storage"
 	"github.com/spf13/viper"
 	"log"
@@ -21,6 +22,8 @@ func main() {
 
 	store := storage.NewPostgresStorage()
 	server := api.NewServer(*listenAddr, store)
+
+	scraper.RunScraperPeriodically()
 
 	fmt.Println("Started server on port" + *listenAddr)
 	err2 := server.Start()

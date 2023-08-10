@@ -3,6 +3,7 @@ module github.com/mluksic/product-price-tracker
 go 1.20
 
 require (
+	github.com/go-chi/chi/v5 v5.0.10
 	github.com/gocolly/colly v1.2.0
 	github.com/jackc/pgx/v5 v5.4.2
 	github.com/spf13/viper v1.16.0
@@ -15,7 +16,6 @@ require (
 	github.com/antchfx/xmlquery v1.3.1 // indirect
 	github.com/antchfx/xpath v1.2.4 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
-	github.com/go-chi/chi/v5 v5.0.10 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect

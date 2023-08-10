@@ -42,12 +42,18 @@ func (s *Server) Start() error {
 func (s *Server) handleGetProductPrices(w http.ResponseWriter, r *http.Request) {
 	productId, err := getId(r)
 	if err != nil {
-		WriteJson(w, http.StatusBadRequest, ApiError{Error: err.Error()})
+		WriteJson(w, http.StatusBadRequest, ApiError{
+			Error:  "There was an error fetching query param",
+			Detail: err.Error(),
+		})
 		return
 	}
 	prices, err := s.storage.GetProductPrices(productId)
 	if err != nil {
-		WriteJson(w, http.StatusInternalServerError, ApiError{Error: "Unable to fetch product prices: " + err.Error()})
+		WriteJson(w, http.StatusInternalServerError, ApiError{
+			Error:  "Unable to fetch product prices",
+			Detail: err.Error(),
+		})
 		return
 	}
 
@@ -80,14 +86,20 @@ func (s *Server) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 	var req types.CreateProductRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		WriteJson(w, http.StatusBadRequest, ApiError{Error: err.Error()})
+		WriteJson(w, http.StatusBadRequest, ApiError{
+			Error:  "Unable to decode request body",
+			Detail: err.Error(),
+		})
 		return
 	}
 
 	p := types.NewProduct(req.Name)
 	err = s.storage.CreateProduct(p)
 	if err != nil {
-		WriteJson(w, http.StatusInternalServerError, ApiError{Error: "Unable to create product: " + err.Error()})
+		WriteJson(w, http.StatusInternalServerError, ApiError{
+			Error:  "Unable to create product in the DB",
+			Detail: err.Error(),
+		})
 		return
 	}
 
@@ -97,7 +109,9 @@ func (s *Server) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 func (s *Server) handleGetProducts(w http.ResponseWriter, r *http.Request) {
 	products, err := s.storage.GetProducts()
 	if err != nil {
-		WriteJson(w, http.StatusBadRequest, ApiError{Error: "Unable to get products: " + err.Error()})
+		WriteJson(w, http.StatusBadRequest, ApiError{
+			Error:  "Unable to get products from the DB",
+			Detail: err.Error()})
 		return
 	}
 
@@ -130,16 +144,29 @@ func (s *Server) handleIndexPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleScrapeProductPrices(w http.ResponseWriter, r *http.Request) {
-	id, _ := getId(r)
+	id, err := getId(r)
+	if err != nil {
+		WriteJson(w, http.StatusBadRequest, ApiError{
+			Error:  "There was an error fetching query param",
+			Detail: err.Error(),
+		})
+		return
+	}
 	product, err := s.storage.GetProduct(id)
 	if err != nil {
-		WriteJson(w, http.StatusBadRequest, ApiError{Error: "There was an error retrieving the product from DB: " + err.Error()})
+		WriteJson(w, http.StatusBadRequest, ApiError{
+			Error:  "There was an error retrieving the product from the DB",
+			Detail: err.Error(),
+		})
 		return
 	}
 
 	productVariants, err := scraper.Scrape([]string{product.Name})
 	if err != nil {
-		WriteJson(w, http.StatusInternalServerError, ApiError{Error: "There was an error scraping the product: " + err.Error()})
+		WriteJson(w, http.StatusInternalServerError, ApiError{
+			Error:  "There was an error scraping the product",
+			Detail: err.Error(),
+		})
 		return
 	}
 
@@ -148,7 +175,10 @@ func (s *Server) handleScrapeProductPrices(w http.ResponseWriter, r *http.Reques
 		productPrice := types.NewProductPrice(productVariant.Name, product.ID, productVariant.Price, productVariant.Url, time.Now())
 		err := s.storage.CreateProductPrice(productPrice)
 		if err != nil {
-			WriteJson(w, http.StatusInternalServerError, ApiError{Error: "There was an saving scraped prices for product into the DB: " + err.Error()})
+			WriteJson(w, http.StatusInternalServerError, ApiError{
+				Error:  "There was an saving scraped prices for product into the DB",
+				Detail: err.Error(),
+			})
 			return
 		}
 	}
@@ -168,7 +198,8 @@ func WriteJson(w http.ResponseWriter, status int, msg any) {
 }
 
 type ApiError struct {
-	Error string `json:"error"`
+	Error  string `json:"error"`
+	Detail string `json:"detail"`
 }
 
 func getId(r *http.Request) (int, error) {

@@ -40,6 +40,7 @@ func (s *Server) Start() error {
 		r.Route("/{id}", func(r chi.Router) {
 			r.Get("/", s.handleGetProductPrices)
 			r.Post("/scrape", s.handleScrapeProductPrices)
+			r.Put("/track", s.handleToggleProductTracking)
 		})
 	})
 
@@ -191,6 +192,27 @@ func (s *Server) handleScrapeProductPrices(w http.ResponseWriter, r *http.Reques
 	}
 
 	WriteJson(w, http.StatusOK, map[string]string{"message": "successfully scraped product prices"})
+}
+
+func (s *Server) handleToggleProductTracking(w http.ResponseWriter, r *http.Request) {
+	id, err := getId(r)
+	if err != nil {
+		WriteJson(w, http.StatusBadRequest, ApiError{
+			Error:  "There was an error fetching query param",
+			Detail: err.Error(),
+		})
+		return
+	}
+
+	err = s.storage.ToggleProductTracking(id)
+	if err != nil {
+		WriteJson(w, http.StatusBadRequest, ApiError{
+			Error:  "There was an error toggling product tracking",
+			Detail: err.Error(),
+		})
+		return
+	}
+	WriteJson(w, http.StatusOK, map[string]string{"message": "successfully toggled product tracking"})
 }
 
 func WriteJson(w http.ResponseWriter, status int, msg any) {

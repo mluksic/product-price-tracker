@@ -98,6 +98,12 @@ func (p PostgresStorage) GetProduct(id int) (types.Product, error) {
 	return product, nil
 }
 
+func (p PostgresStorage) ToggleProductTracking(id int) error {
+	_, err := p.db.Exec(context.Background(), "update product set is_tracked = not is_tracked where id = $1", id)
+
+	return err
+}
+
 func (p PostgresStorage) DeleteProductPrice() error {
 	//TODO implement me
 	panic("implement me")

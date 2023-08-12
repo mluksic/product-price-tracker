@@ -61,7 +61,7 @@ func (p PostgresStorage) CreateProduct(product *types.Product) error {
 }
 
 func (p PostgresStorage) GetProducts() ([]types.Product, error) {
-	rows, err := p.db.Query(context.Background(), "select id, name, is_tracked, created_at, updated_at from product")
+	rows, err := p.db.Query(context.Background(), "select id, name, is_tracked, created_at, updated_at from product order by id desc")
 
 	if err != nil {
 		return nil, err

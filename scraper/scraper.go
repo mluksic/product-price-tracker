@@ -52,6 +52,10 @@ func ScrapeAndSave() {
 	}
 
 	for _, product := range products {
+		// skip disabled product
+		if !product.IsTracked {
+			continue
+		}
 		productVariants, err := Scrape([]string{product.Name})
 		if err != nil {
 			log.Fatal(err.Error())

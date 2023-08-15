@@ -8,6 +8,8 @@ import (
 	"github.com/mluksic/product-price-tracker/storage"
 	"github.com/spf13/viper"
 	"log"
+	"log/slog"
+	"os"
 )
 
 func main() {
@@ -16,6 +18,9 @@ func main() {
 	if err != nil {             // Handle errors reading the config file
 		panic(fmt.Errorf("fatal error config file: %w", err))
 	}
+
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
 
 	listenAddr := flag.String("listenAddr", ":3000", "the server port")
 	flag.Parse()

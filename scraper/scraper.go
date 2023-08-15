@@ -6,6 +6,7 @@ import (
 	"github.com/mluksic/product-price-tracker/storage"
 	"github.com/mluksic/product-price-tracker/types"
 	"log"
+	"log/slog"
 	"strconv"
 	"strings"
 	"time"
@@ -24,6 +25,7 @@ func NewScraper(storer storage.Storer) *Scraper {
 }
 
 func RunScraperPeriodically() {
+	slog.Info("Started running scraper", "order_id", 123, "request_id", "1234ssdf")
 	ticker := time.NewTicker(1 * time.Hour)
 	//defer ticker.Stop()
 

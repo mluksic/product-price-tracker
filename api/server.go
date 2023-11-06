@@ -134,7 +134,7 @@ func (s *Server) handleProductDeletion(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	WriteJson(w, http.StatusNoContent, map[string]string{})
+	WriteJson(w, http.StatusOK, map[string]string{})
 
 }
 

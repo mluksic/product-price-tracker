@@ -60,6 +60,12 @@ func (p PostgresStorage) CreateProduct(product *types.Product) error {
 	return err
 }
 
+func (p PostgresStorage) DeleteProduct(id int) error {
+	_, err := p.db.Exec(context.Background(), "delete from product where id = $1", id)
+
+	return err
+}
+
 func (p PostgresStorage) GetProducts() ([]types.Product, error) {
 	rows, err := p.db.Query(context.Background(), "select id, name, is_tracked, created_at, updated_at from product order by id desc")
 

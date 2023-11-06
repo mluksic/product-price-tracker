@@ -7,6 +7,7 @@ type Storer interface {
 	CreateProduct(productPrice *types.Product) error
 	GetProducts() ([]types.Product, error)
 	GetProduct(id int) (types.Product, error)
+	DeleteProduct(int int) error
 	ToggleProductTracking(id int) error
 	CreateProductPrice(productPrice *types.ProductPrice) error
 	DeleteProductPrice() error

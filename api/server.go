@@ -41,6 +41,7 @@ func (s *Server) Start() error {
 			r.Get("/", s.handleGetProductPrices)
 			r.Post("/scrape", s.handleScrapeProductPrices)
 			r.Put("/track", s.handleToggleProductTracking)
+			r.Delete("/", s.handleProductDeletion)
 		})
 	})
 
@@ -112,6 +113,29 @@ func (s *Server) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 
 	WriteJson(w, http.StatusCreated, p)
+}
+
+func (s *Server) handleProductDeletion(w http.ResponseWriter, r *http.Request) {
+	id, err := getId(r)
+	if err != nil {
+		WriteJson(w, http.StatusBadRequest, ApiError{
+			Error:  "There was an error fetching query param",
+			Detail: err.Error(),
+		})
+		return
+	}
+
+	err = s.storage.DeleteProduct(id)
+	if err != nil {
+		WriteJson(w, http.StatusBadRequest, ApiError{
+			Error:  "Unable to delete product",
+			Detail: err.Error(),
+		})
+		return
+	}
+
+	WriteJson(w, http.StatusNoContent, map[string]string{})
+
 }
 
 func (s *Server) handleGetProducts(w http.ResponseWriter, r *http.Request) {

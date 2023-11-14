@@ -12,19 +12,19 @@ import (
 	"time"
 )
 
-type Scraper struct {
+type PriceManager struct {
 	c       *colly.Collector
 	storage storage.Storer
 }
 
-func NewScraper(storer storage.Storer) *Scraper {
-	return &Scraper{
+func NewPriceManager(storer storage.Storer) *PriceManager {
+	return &PriceManager{
 		c:       colly.NewCollector(),
 		storage: storer,
 	}
 }
 
-func RunScraperPeriodically() {
+func RunPriceManagerPeriodically() {
 	slog.Info("Started running scraper", "order_id", 123, "request_id", "1234ssdf")
 	ticker := time.NewTicker(1 * time.Hour)
 	//defer ticker.Stop()
@@ -46,9 +46,9 @@ func RunScraperPeriodically() {
 
 func ScrapeAndSave() {
 	store := storage.NewPostgresStorage()
-	scraper := NewScraper(store)
+	priceManager := NewPriceManager(store)
 
-	products, err := scraper.storage.GetProducts()
+	products, err := priceManager.storage.GetProducts()
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -83,11 +83,11 @@ func Scrape(productNames []string) ([]types.ProductVariant, error) {
 	)
 
 	store := storage.NewPostgresStorage()
-	scraper := NewScraper(store)
+	priceManager := NewPriceManager(store)
 
 	urls = getSearchUrls(productNames)
 
-	scraper.c.OnHTML(".s-result-list .s-result-item", func(e *colly.HTMLElement) {
+	priceManager.c.OnHTML(".s-result-list .s-result-item", func(e *colly.HTMLElement) {
 		e.ForEach("div.a-section.a-spacing-base", func(_ int, h *colly.HTMLElement) {
 			product := extractProduct(h)
 			products = append(products, product)
@@ -95,18 +95,18 @@ func Scrape(productNames []string) ([]types.ProductVariant, error) {
 	})
 
 	// Error handling
-	scraper.c.OnError(func(r *colly.Response, err error) {
+	priceManager.c.OnError(func(r *colly.Response, err error) {
 		log.Println("Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
 	})
 
 	// Print for debugging purposes
-	scraper.c.OnRequest(func(r *colly.Request) {
+	priceManager.c.OnRequest(func(r *colly.Request) {
 		fmt.Println("Visiting: " + r.URL.String())
 	})
 
 	// Start scraping URLs
 	for _, url := range urls {
-		err := scraper.c.Visit(url)
+		err := priceManager.c.Visit(url)
 		if err != nil {
 			return nil, err
 		}

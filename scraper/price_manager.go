@@ -1,32 +1,29 @@
 package scraper
 
 import (
-	"fmt"
-	"github.com/gocolly/colly"
-	"github.com/mluksic/product-price-tracker/storage"
 	"github.com/mluksic/product-price-tracker/types"
-	"log"
 	"log/slog"
-	"strconv"
-	"strings"
 	"time"
 )
 
-type PriceManager struct {
-	c       *colly.Collector
-	storage storage.Storer
+type Scraper interface {
+	Scrape(productNames []string) ([]types.ProductVariant, error)
+	ScrapeAndSave()
 }
 
-func NewPriceManager(storer storage.Storer) *PriceManager {
+type PriceManager struct {
+	scraper Scraper
+}
+
+func NewPriceManager(scraper Scraper) *PriceManager {
 	return &PriceManager{
-		c:       colly.NewCollector(),
-		storage: storer,
+		scraper: scraper,
 	}
 }
 
-func RunPriceManagerPeriodically() {
+func (priceManager PriceManager) RunPriceManagerPeriodically() {
 	slog.Info("Started running scraper", "order_id", 123, "request_id", "1234ssdf")
-	ticker := time.NewTicker(1 * time.Hour)
+	ticker := time.NewTicker(10 * time.Second)
 	//defer ticker.Stop()
 
 	// Creating channel using make
@@ -38,104 +35,8 @@ func RunPriceManagerPeriodically() {
 			case <-tickerChan:
 				return
 			case <-ticker.C:
-				ScrapeAndSave()
+				priceManager.scraper.ScrapeAndSave()
 			}
 		}
 	}()
-}
-
-func ScrapeAndSave() {
-	store := storage.NewPostgresStorage()
-	priceManager := NewPriceManager(store)
-
-	products, err := priceManager.storage.GetProducts()
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
-	for _, product := range products {
-		// skip disabled product
-		if !product.IsTracked {
-			continue
-		}
-		productVariants, err := Scrape([]string{product.Name})
-		if err != nil {
-			log.Fatal(err.Error())
-		}
-
-		// save scraped products into DB
-		for _, productVariant := range productVariants {
-			productPrice := types.NewProductPrice(productVariant.Name, product.ID, productVariant.Price, productVariant.Url, time.Now())
-			err := store.CreateProductPrice(productPrice)
-			if err != nil {
-				log.Fatal(err.Error())
-			}
-		}
-	}
-
-	fmt.Println("Scraped and saved product prices to the DB...")
-}
-
-func Scrape(productNames []string) ([]types.ProductVariant, error) {
-	var (
-		products []types.ProductVariant
-		urls     []string
-	)
-
-	store := storage.NewPostgresStorage()
-	priceManager := NewPriceManager(store)
-
-	urls = getSearchUrls(productNames)
-
-	priceManager.c.OnHTML(".s-result-list .s-result-item", func(e *colly.HTMLElement) {
-		e.ForEach("div.a-section.a-spacing-base", func(_ int, h *colly.HTMLElement) {
-			product := extractProduct(h)
-			products = append(products, product)
-		})
-	})
-
-	// Error handling
-	priceManager.c.OnError(func(r *colly.Response, err error) {
-		log.Println("Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
-	})
-
-	// Print for debugging purposes
-	priceManager.c.OnRequest(func(r *colly.Request) {
-		fmt.Println("Visiting: " + r.URL.String())
-	})
-
-	// Start scraping URLs
-	for _, url := range urls {
-		err := priceManager.c.Visit(url)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return products, nil
-}
-
-func extractProduct(h *colly.HTMLElement) types.ProductVariant {
-	priceStr := strings.Join(strings.Split(h.ChildText("span.a-price-whole"), ","), "")
-	price, _ := strconv.Atoi(priceStr)
-	name := h.ChildText("span.a-text-normal")
-	url := h.ChildAttr("a.a-link-normal", "href")
-
-	return types.ProductVariant{
-		Price: price,
-		Url:   "https://www.amazon.de" + url,
-		Name:  name,
-	}
-}
-
-func getSearchUrls(productNames []string) []string {
-	var urls []string
-
-	for _, pName := range productNames {
-		queryParam := strings.Join(strings.Split(pName, " "), "+")
-		url := "https://www.amazon.de/s?k=" + queryParam
-		urls = append(urls, url)
-	}
-
-	return urls
 }

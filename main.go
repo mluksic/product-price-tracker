@@ -28,7 +28,12 @@ func main() {
 	store := storage.NewPostgresStorage()
 	server := api.NewServer(*listenAddr, store)
 
-	scraper.RunScraperPeriodically()
+	amazonScraper := scraper.NewAmazonScraper(
+		store,
+	)
+	priceManager := scraper.NewPriceManager(amazonScraper)
+
+	priceManager.RunPriceManagerPeriodically()
 
 	fmt.Println("Started server on port" + *listenAddr)
 	err2 := server.Start()

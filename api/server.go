@@ -193,7 +193,9 @@ func (s *Server) handleScrapeProductPrices(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	productVariants, err := scraper.Scrape([]string{product.Name})
+	amazonScraper := scraper.NewAmazonScraper(s.storage)
+
+	productVariants, err := amazonScraper.Scrape([]string{product.Name})
 	if err != nil {
 		WriteJson(w, http.StatusInternalServerError, ApiError{
 			Error:  "There was an error scraping the product",

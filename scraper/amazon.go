@@ -12,9 +12,8 @@ import (
 )
 
 type AmazonScraper struct {
-	c            *colly.Collector
-	storage      storage.Storer
-	priceManager PriceManager
+	c       *colly.Collector
+	storage storage.Storer
 }
 
 func NewAmazonScraper(store storage.Storer) *AmazonScraper {

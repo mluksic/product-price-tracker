@@ -22,8 +22,8 @@ func NewPriceManager(scraper Scraper) *PriceManager {
 }
 
 func (priceManager PriceManager) RunPriceManagerPeriodically() {
-	slog.Info("Started running scraper", "order_id", 123, "request_id", "1234ssdf")
-	ticker := time.NewTicker(10 * time.Second)
+	slog.Info("Started running scraper")
+	ticker := time.NewTicker(24 * time.Hour)
 	//defer ticker.Stop()
 
 	// Creating channel using make

@@ -1,14 +1,12 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/mluksic/product-price-tracker/scraper"
 	"github.com/mluksic/product-price-tracker/storage"
 	"github.com/spf13/cobra"
-	"os"
 )
 
-var rootCmd = &cobra.Command{
+var scrapeCmd = &cobra.Command{
 	Use:   "scrape",
 	Short: "Scrape product prices",
 	Long:  "Scrape products prices from specific source/store",
@@ -20,9 +18,6 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+func init() {
+	rootCmd.AddCommand(scrapeCmd)
 }

@@ -55,7 +55,7 @@ func (p PostgresStorage) CreateProductPrice(productPrice *types.ProductPrice) er
 }
 
 func (p PostgresStorage) CreateProduct(product *types.Product) error {
-	_, err := p.db.Exec(context.Background(), "insert into product (name, is_tracked, created_at, updated_at) values ($1,$2,$3,$4)", product.Name, product.IsTracked, product.CreatedAt, product.UpdatedAt)
+	_, err := p.db.Exec(context.Background(), "insert into product (name, is_tracked, url, created_at, updated_at) values ($1,$2,$3,$4,$5)", product.Name, product.IsTracked, product.Url, product.CreatedAt, product.UpdatedAt)
 
 	return err
 }
@@ -67,7 +67,7 @@ func (p PostgresStorage) DeleteProduct(id int) error {
 }
 
 func (p PostgresStorage) GetProducts() ([]types.Product, error) {
-	rows, err := p.db.Query(context.Background(), "select id, name, is_tracked, created_at, updated_at from product order by id desc")
+	rows, err := p.db.Query(context.Background(), "select id, name, is_tracked, url, created_at, updated_at from product order by id desc")
 
 	if err != nil {
 		return nil, err
@@ -76,7 +76,7 @@ func (p PostgresStorage) GetProducts() ([]types.Product, error) {
 	var products []types.Product
 	for rows.Next() {
 		var product types.Product
-		err := rows.Scan(&product.ID, &product.Name, &product.IsTracked, &product.CreatedAt, &product.UpdatedAt)
+		err := rows.Scan(&product.ID, &product.Name, &product.IsTracked, &product.Url, &product.CreatedAt, &product.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -87,7 +87,7 @@ func (p PostgresStorage) GetProducts() ([]types.Product, error) {
 }
 
 func (p PostgresStorage) GetProduct(id int) (types.Product, error) {
-	row, err := p.db.Query(context.Background(), "select id, name, is_tracked, created_at, updated_at from product where id = $1", id)
+	row, err := p.db.Query(context.Background(), "select id, name, is_tracked, url, created_at, updated_at from product where id = $1", id)
 	if err != nil {
 		return types.Product{}, err
 	}
@@ -95,7 +95,7 @@ func (p PostgresStorage) GetProduct(id int) (types.Product, error) {
 	var product types.Product
 
 	for row.Next() {
-		err = row.Scan(&product.ID, &product.Name, &product.IsTracked, &product.CreatedAt, &product.UpdatedAt)
+		err = row.Scan(&product.ID, &product.Name, &product.IsTracked, &product.Url, &product.CreatedAt, &product.UpdatedAt)
 		if err != nil {
 			return types.Product{}, err
 		}

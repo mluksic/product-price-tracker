@@ -102,7 +102,7 @@ func (s *Server) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	p := types.NewProduct(req.Name)
+	p := types.NewProduct(req.Name, req.Url)
 	err = s.storage.CreateProduct(p)
 	if err != nil {
 		WriteJson(w, http.StatusInternalServerError, ApiError{

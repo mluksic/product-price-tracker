@@ -22,16 +22,12 @@ func NewProduct(name string, url string) *Product {
 }
 
 type ProductVariant struct {
-	Name  string `json:"name"`
-	Price int    `json:"price"`
-	Url   string `json:"url"`
+	Price int `json:"price"`
 }
 
-func NewProductVariant(name string, price int, url string) *ProductVariant {
+func NewProductVariant(price int) *ProductVariant {
 	return &ProductVariant{
-		Name:  name,
 		Price: price,
-		Url:   url,
 	}
 }
 

@@ -23,19 +23,20 @@ func NewAmazonScraper(store storage.Storer) *AmazonScraper {
 	}
 }
 
-func (scraper AmazonScraper) Scrape(productNames []string) ([]types.ProductVariant, error) {
+func (scraper AmazonScraper) Scrape(urls []string) ([]types.ProductVariant, error) {
 	var (
 		products []types.ProductVariant
-		urls     []string
 	)
-
-	urls = scraper.getSearchUrls(productNames)
-
-	scraper.c.OnHTML(".s-result-list .s-result-item", func(e *colly.HTMLElement) {
-		e.ForEach("div.a-section.a-spacing-base", func(_ int, h *colly.HTMLElement) {
-			product := scraper.extractProduct(h)
-			products = append(products, product)
-		})
+	scraper.c.OnHTML("span.a-price.aok-align-center.reinventPricePriceToPayMargin.priceToPay", func(e *colly.HTMLElement) {
+		priceWhole := e.ChildText(".a-price-whole")
+		priceFraction := e.ChildText(".a-price-fraction")
+		priceStr := priceWhole + priceFraction
+		priceStr = strings.Replace(priceStr, ".", "", -1)
+		price, _ := strconv.Atoi(priceStr)
+		product := types.ProductVariant{
+			Price: price,
+		}
+		products = append(products, product)
 	})
 
 	// Error handling
@@ -57,19 +58,6 @@ func (scraper AmazonScraper) Scrape(productNames []string) ([]types.ProductVaria
 	}
 
 	return products, nil
-}
-
-func (scraper AmazonScraper) extractProduct(h *colly.HTMLElement) types.ProductVariant {
-	priceStr := strings.Join(strings.Split(h.ChildText("span.a-price-whole"), ","), "")
-	price, _ := strconv.Atoi(priceStr)
-	name := h.ChildText("span.a-text-normal")
-	url := h.ChildAttr("a.a-link-normal", "href")
-
-	return types.ProductVariant{
-		Price: price,
-		Url:   "https://www.amazon.de" + url,
-		Name:  name,
-	}
 }
 
 func (scraper AmazonScraper) getSearchUrls(productNames []string) []string {
@@ -95,14 +83,14 @@ func (scraper AmazonScraper) ScrapeAndSave() {
 		if !product.IsTracked {
 			continue
 		}
-		productVariants, err := scraper.Scrape([]string{product.Name})
+		productVariants, err := scraper.Scrape([]string{product.Url})
 		if err != nil {
 			log.Fatal(err.Error())
 		}
 
 		// save scraped products into DB
 		for _, productVariant := range productVariants {
-			productPrice := types.NewProductPrice(productVariant.Name, product.ID, productVariant.Price, productVariant.Url, time.Now())
+			productPrice := types.NewProductPrice(product.ID, productVariant.Price, time.Now())
 			err := scraper.storage.CreateProductPrice(productPrice)
 			if err != nil {
 				log.Fatal(err.Error())

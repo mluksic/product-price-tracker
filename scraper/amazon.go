@@ -60,17 +60,17 @@ func (scraper AmazonScraper) Scrape(urls []string) ([]types.ProductVariant, erro
 	return products, nil
 }
 
-func (scraper AmazonScraper) getSearchUrls(productNames []string) []string {
-	var urls []string
-
-	for _, pName := range productNames {
-		queryParam := strings.Join(strings.Split(pName, " "), "+")
-		url := "https://www.amazon.de/s?k=" + queryParam
-		urls = append(urls, url)
-	}
-
-	return urls
-}
+//func (scraper AmazonScraper) getSearchUrls(productNames []string) []string {
+//	var urls []string
+//
+//	for _, pName := range productNames {
+//		queryParam := strings.Join(strings.Split(pName, " "), "+")
+//		url := "https://www.amazon.de/s?k=" + queryParam
+//		urls = append(urls, url)
+//	}
+//
+//	return urls
+//}
 
 func (scraper AmazonScraper) ScrapeAndSave() {
 	products, err := scraper.storage.GetProducts()

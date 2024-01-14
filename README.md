@@ -17,7 +17,7 @@ Download and install:
 
 - [Go](https://go.dev/doc/install)
 - [Goose](https://github.com/pressly/goose)
- 
+
 
 ## Running the app
 
@@ -28,6 +28,10 @@ Copy, rename, and adjust [.env.template](./.env.template) file so that the app c
 ### Run the following command to start the app
 ```bash
 $ make run
+```
+### Run the following command to use live reload (requires [Air](https://github.com/cosmtrek/air) to be installed)
+```bash
+$ air
 ```
 
 ## Build
@@ -41,6 +45,10 @@ $ make build
 ```bash
 $ make tidy
 ```
+
+## Live reload
+
+Project uses [Air](https://github.com/cosmtrek/air) for better & faster developer experience
 
 ## Using Goose to handle DB migrations
 

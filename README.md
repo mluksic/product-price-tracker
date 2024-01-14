@@ -19,13 +19,16 @@ Download and install:
 - [Goose](https://github.com/pressly/goose)
 
 
-## Running the app
+## Running the CLI app
+App has two main commands. (run `make run` to get more info)
+- serve - server HTTP serve on specific port (:3030 is default)
+- scrape - fetch prices from URLs
 
 ### Create `.env` file in the root
 
 Copy, rename, and adjust [.env.template](./.env.template) file so that the app connects to your Postgres DB
 
-### Run the following command to start the app
+### Run the following command to start the CLI app
 ```bash
 $ make run
 ```

@@ -83,6 +83,11 @@ func (scraper AmazonScraper) ScrapeAndSave() {
 		if !product.IsTracked {
 			continue
 		}
+		if !strings.Contains(product.Url, "amazon") {
+			fmt.Println("skipping...")
+			continue
+		}
+
 		productVariants, err := scraper.Scrape([]string{product.Url})
 		if err != nil {
 			log.Fatal(err.Error())

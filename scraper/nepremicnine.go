@@ -5,8 +5,8 @@ import (
 	"github.com/gocolly/colly"
 	"github.com/mluksic/product-price-tracker/storage"
 	"github.com/mluksic/product-price-tracker/types"
+	"github.com/mluksic/product-price-tracker/util"
 	"log"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -29,9 +29,8 @@ func (scraper NepremicnineScraper) Scrape(urls []string) ([]types.ProductVariant
 	scraper.c.OnHTML(".cena span", func(e *colly.HTMLElement) {
 		priceStr := strings.Replace(e.Text, "cca", "", -1)
 		priceStr = strings.Replace(priceStr, "€", "", -1)
-		price, _ := strconv.Atoi(priceStr)
 
-		product := types.ProductVariant{Price: price}
+		product := types.ProductVariant{Price: util.PriceToCents(priceStr)}
 		products = append(products, product)
 	})
 

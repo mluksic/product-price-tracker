@@ -5,8 +5,8 @@ import (
 	"github.com/gocolly/colly"
 	"github.com/mluksic/product-price-tracker/storage"
 	"github.com/mluksic/product-price-tracker/types"
+	"github.com/mluksic/product-price-tracker/util"
 	"log"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -31,9 +31,8 @@ func (scraper MimovrsteScraper) Scrape(urls []string) ([]types.ProductVariant, e
 		priceStr = strings.ReplaceAll(priceStr, "\n", "")
 		priceStr = strings.ReplaceAll(priceStr, " ", "")
 		priceStr = strings.Replace(priceStr, "\u00A0", "", -1)
-		price, _ := strconv.Atoi(priceStr)
 
-		product := types.ProductVariant{Price: price * 100}
+		product := types.ProductVariant{Price: util.PriceToCents(priceStr)}
 		products = append(products, product)
 	})
 

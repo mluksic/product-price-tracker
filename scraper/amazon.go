@@ -5,8 +5,8 @@ import (
 	"github.com/gocolly/colly"
 	"github.com/mluksic/product-price-tracker/storage"
 	"github.com/mluksic/product-price-tracker/types"
+	"github.com/mluksic/product-price-tracker/util"
 	"log"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -32,9 +32,8 @@ func (scraper AmazonScraper) Scrape(urls []string) ([]types.ProductVariant, erro
 		priceFraction := e.ChildText(".a-price-fraction")
 		priceStr := priceWhole + priceFraction
 		priceStr = strings.Replace(priceStr, ".", "", -1)
-		price, _ := strconv.Atoi(priceStr)
 		product := types.ProductVariant{
-			Price: price,
+			Price: util.PriceToCents(priceStr),
 		}
 		products = append(products, product)
 	})

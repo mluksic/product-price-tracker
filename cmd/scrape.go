@@ -42,6 +42,6 @@ var scrapeCmd = &cobra.Command{
 
 func init() {
 	scrapeCmd.Flags().StringVarP(&Site, "site", "s", "", "Select which scraper to use - 'nepremicnine' or 'amazon'")
-	scrapeCmd.MarkFlagRequired("site")
+	_ = scrapeCmd.MarkFlagRequired("site")
 	rootCmd.AddCommand(scrapeCmd)
 }

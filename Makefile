@@ -17,4 +17,7 @@ tidy:
 	go fmt
 	go mod tidy
 
+build-prod:
+	env GOOS=linux GOARCH=amd64 go build -o bin/main
+
 .PHONY: build, run, test, tidy

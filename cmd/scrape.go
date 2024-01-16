@@ -20,6 +20,7 @@ var scrapeCmd = &cobra.Command{
 		scrapers := []string{
 			"nepremicnine",
 			"amazon",
+			"mimovrste",
 		}
 		if !slices.Contains(scrapers, Site) {
 			fmt.Printf("You have to one of supported scrapers: %s", strings.Join(scrapers, ","))
@@ -28,6 +29,9 @@ var scrapeCmd = &cobra.Command{
 
 		if Site == "nepremicnine" {
 			scraper := scraper.NewNepremicnineScraper(store)
+			scraper.ScrapeAndSave()
+		} else if Site == "mimovrste" {
+			scraper := scraper.NewMimovrsteScraper(store)
 			scraper.ScrapeAndSave()
 		} else {
 			scraper := scraper.NewAmazonScraper(store)

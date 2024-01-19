@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/mluksic/product-price-tracker/api"
 	"github.com/mluksic/product-price-tracker/scraper"
-	"github.com/mluksic/product-price-tracker/storage"
 	"github.com/spf13/cobra"
 	"log"
 )
@@ -19,17 +18,17 @@ var serveCmd = &cobra.Command{
 		//listenAddr := flag.String("listenAddr", ":3000", "the server port")
 		//flag.Parse()
 
-		store := storage.NewPostgresStorage()
-		server := api.NewServer(Port, store)
+		config := api.NewConfig().WithListenAddr(Port).WithId(1)
+		server := api.NewServer(config)
 
 		amazonScraper := scraper.NewAmazonScraper(
-			store,
+			server.Config.Storage,
 		)
 		priceManager := scraper.NewPriceManager(amazonScraper)
 
 		priceManager.RunPriceManagerPeriodically()
 
-		fmt.Println("Started server on port" + Port)
+		fmt.Println("Started server on port" + server.Config.ListenAddr)
 		err := server.Start()
 
 		if err != nil {

@@ -15,17 +15,50 @@ import (
 )
 
 type Server struct {
-	listenAddr string
-	storage    storage.Storer
+	Config Config
 }
 
-func NewServer(listenAddr string, store storage.Storer) *Server {
+func NewServer(config Config) *Server {
 	return &Server{
-		listenAddr: listenAddr,
-		storage:    store,
+		Config: config,
 	}
 }
 
+type Config struct {
+	Id         int
+	Name       string
+	ListenAddr string
+	Storage    storage.Storer
+}
+
+func NewConfig() Config {
+	return Config{
+		Id:         12,
+		Name:       "new server",
+		ListenAddr: ":3030",
+		Storage:    storage.NewPostgresStorage(),
+	}
+}
+
+func (c Config) WithId(id int) Config {
+	c.Id = id
+	return c
+}
+
+func (c Config) WithName(name string) Config {
+	c.Name = name
+	return c
+}
+
+func (c Config) WithListenAddr(addr string) Config {
+	c.ListenAddr = addr
+	return c
+}
+
+func (c Config) WithStorage(s storage.Storer) Config {
+	c.Storage = s
+	return c
+}
 func (s *Server) Start() error {
 	r := chi.NewRouter()
 
@@ -36,8 +69,8 @@ func (s *Server) Start() error {
 		r.Get("/", s.handleGetProducts)
 		r.Post("/", s.handleCreateProduct)
 
-		// routes for "products/{id}"
-		r.Route("/{id}", func(r chi.Router) {
+		// routes for "products/{Id}"
+		r.Route("/{Id}", func(r chi.Router) {
 			r.Get("/", s.handleGetProductPrices)
 			r.Post("/scrape", s.handleScrapeProductPrices)
 			r.Put("/track", s.handleToggleProductTracking)
@@ -45,7 +78,7 @@ func (s *Server) Start() error {
 		})
 	})
 
-	return http.ListenAndServe(s.listenAddr, r)
+	return http.ListenAndServe(s.Config.ListenAddr, r)
 }
 
 func (s *Server) handleGetProductPrices(w http.ResponseWriter, r *http.Request) {
@@ -57,7 +90,7 @@ func (s *Server) handleGetProductPrices(w http.ResponseWriter, r *http.Request) 
 		})
 		return
 	}
-	prices, err := s.storage.GetProductPrices(productId)
+	prices, err := s.Config.Storage.GetProductPrices(productId)
 	if err != nil {
 		WriteJson(w, http.StatusInternalServerError, ApiError{
 			Error:  "Unable to fetch product prices",
@@ -103,7 +136,7 @@ func (s *Server) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 
 	p := types.NewProduct(req.Name, req.Url)
-	err = s.storage.CreateProduct(p)
+	err = s.Config.Storage.CreateProduct(p)
 	if err != nil {
 		WriteJson(w, http.StatusInternalServerError, ApiError{
 			Error:  "Unable to create product in the DB",
@@ -125,7 +158,7 @@ func (s *Server) handleProductDeletion(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = s.storage.DeleteProduct(id)
+	err = s.Config.Storage.DeleteProduct(id)
 	if err != nil {
 		WriteJson(w, http.StatusBadRequest, ApiError{
 			Error:  "Unable to delete product",
@@ -139,7 +172,7 @@ func (s *Server) handleProductDeletion(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleGetProducts(w http.ResponseWriter, r *http.Request) {
-	products, err := s.storage.GetProducts()
+	products, err := s.Config.Storage.GetProducts()
 	if err != nil {
 		WriteJson(w, http.StatusBadRequest, ApiError{
 			Error:  "Unable to get products from the DB",
@@ -163,7 +196,7 @@ func (s *Server) handleIndexPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	products, _ := s.storage.GetProducts()
+	products, _ := s.Config.Storage.GetProducts()
 	tmplData := map[string]any{
 		"products": products,
 	}
@@ -184,7 +217,7 @@ func (s *Server) handleScrapeProductPrices(w http.ResponseWriter, r *http.Reques
 		})
 		return
 	}
-	product, err := s.storage.GetProduct(id)
+	product, err := s.Config.Storage.GetProduct(id)
 	if err != nil {
 		WriteJson(w, http.StatusBadRequest, ApiError{
 			Error:  "There was an error retrieving the product from the DB",
@@ -193,7 +226,7 @@ func (s *Server) handleScrapeProductPrices(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	amazonScraper := scraper.NewAmazonScraper(s.storage)
+	amazonScraper := scraper.NewAmazonScraper(s.Config.Storage)
 
 	productVariants, err := amazonScraper.Scrape([]string{product.Url})
 	if err != nil {
@@ -207,7 +240,7 @@ func (s *Server) handleScrapeProductPrices(w http.ResponseWriter, r *http.Reques
 	// save scraped products into DB
 	for _, productVariant := range productVariants {
 		productPrice := types.NewProductPrice(product.ID, productVariant.Price, time.Now())
-		err := s.storage.CreateProductPrice(productPrice)
+		err := s.Config.Storage.CreateProductPrice(productPrice)
 		if err != nil {
 			WriteJson(w, http.StatusInternalServerError, ApiError{
 				Error:  "There was an saving scraped prices for product into the DB",
@@ -230,7 +263,7 @@ func (s *Server) handleToggleProductTracking(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	err = s.storage.ToggleProductTracking(id)
+	err = s.Config.Storage.ToggleProductTracking(id)
 	if err != nil {
 		WriteJson(w, http.StatusBadRequest, ApiError{
 			Error:  "There was an error toggling product tracking",
@@ -258,11 +291,11 @@ type ApiError struct {
 }
 
 func getId(r *http.Request) (int, error) {
-	param := chi.URLParam(r, "id")
+	param := chi.URLParam(r, "Id")
 
 	id, err := strconv.Atoi(param)
 	if err != nil {
-		return id, fmt.Errorf("invalid id param given %s", param)
+		return id, fmt.Errorf("invalid Id param given %s", param)
 	}
 
 	return id, nil

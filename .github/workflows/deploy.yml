@@ -47,6 +47,7 @@ jobs:
           # Optional: The mode to install golangci-lint. It can be 'binary' or 'goinstall'.
           # install-mode: "goinstall"
   build:
+    needs: golangci
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -66,21 +67,14 @@ jobs:
     needs: build
 
     steps:
-      - name: Copy artifacts to EC2 instance
-        uses: appleboy/scp-action@master
+      - name: Deploy to my EC2 instance
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.EC2_HOST }}
+          REMOTE_USER: ${{ secrets.EC2_USERNAME }}
+          TARGET: "/var/www/tracker"
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: "app"
-          target: "/var/www/tracker"  # Update with your desired deployment path
-
-      - name: SSH into EC2 instance and restart service
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
             cd /var/www/tracker
             ./bin/main serve -p :3030

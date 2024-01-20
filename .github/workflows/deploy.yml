@@ -57,7 +57,7 @@ jobs:
           go-version: '1.21'
 
       - name: Build
-        run: env GOOS=linux GOARCH=amd6 go build -o bin/main
+        run: go build -o bin/main
 
       #      - name: Test
       #        run: go test -v ./...

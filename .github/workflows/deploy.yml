@@ -1,13 +1,8 @@
-name: golangci-lint
+name: deploy
 on:
   push:
     branches:
       - master
-
-permissions:
-  contents: read
-  # Optional: allow read access to pull request. Use with `only-new-issues` option.
-  # pull-requests: read
 
 jobs:
   golangci:
@@ -51,3 +46,41 @@ jobs:
 
           # Optional: The mode to install golangci-lint. It can be 'binary' or 'goinstall'.
           # install-mode: "goinstall"
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Build
+        run: env GOOS=linux GOARCH=amd6 go build -o bin/main
+
+      #      - name: Test
+      #        run: go test -v ./...
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Copy artifacts to EC2 instance
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          source: "app"
+          target: "/var/www/tracker"  # Update with your desired deployment path
+
+      - name: SSH into EC2 instance and restart service
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            cd /var/www/tracker
+            ./bin/main serve -p :3030

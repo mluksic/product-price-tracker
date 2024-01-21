@@ -74,7 +74,13 @@ jobs:
           REMOTE_HOST: ${{ secrets.EC2_HOST }}
           REMOTE_USER: ${{ secrets.EC2_USERNAME }}
           TARGET: "/var/www/tracker"
+
+      - name: SSH into EC2 instance and restart service
+        uses: appleboy/ssh-action@master
         with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
             cd /var/www/tracker
             ./bin/main serve -p :3030

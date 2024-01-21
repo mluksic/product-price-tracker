@@ -67,13 +67,22 @@ jobs:
     needs: build
 
     steps:
+#      - name: Deploy to my EC2 instance
+#        uses: easingthemes/ssh-deploy@main
+#        env:
+#          SSH_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
+#          REMOTE_HOST: ${{ secrets.EC2_HOST }}
+#          REMOTE_USER: ${{ secrets.EC2_USERNAME }}
+#          TARGET: "/var/www/tracker"
       - name: Deploy to my EC2 instance
-        uses: easingthemes/ssh-deploy@main
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
-          REMOTE_HOST: ${{ secrets.EC2_HOST }}
-          REMOTE_USER: ${{ secrets.EC2_USERNAME }}
-          TARGET: "/var/www/tracker"
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          port: 22
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          source: "bin/main"
+          target: "/var/www/tracker"
 
       - name: SSH into EC2 instance and restart service
         uses: appleboy/ssh-action@master

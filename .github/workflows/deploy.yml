@@ -58,7 +58,7 @@ jobs:
           go-version: '1.21'
 
       - name: Build
-        run: go build -o app
+        run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o app
 
       - name: Deploy to my EC2 instance
         uses: appleboy/scp-action@v0.1.7

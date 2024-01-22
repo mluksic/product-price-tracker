@@ -70,6 +70,7 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           source: "app"
           target: "/var/www/tracker"
+          timeout: 100s
 
       - name: SSH into EC2 instance and restart service
         uses: appleboy/ssh-action@v0.1.3
@@ -77,6 +78,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
+          timeout: 100s
           script: |
             cd /var/www/tracker
             ./app serve -p :3030

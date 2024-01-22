@@ -60,15 +60,13 @@ jobs:
       - name: Build
         run: go build -o app
 
-      #      - name: Test
-      #        run: go test -v ./...
       - name: Deploy to my EC2 instance
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: "app"
+          source: "./"
           target: "/var/www/tracker"
           timeout: 100s
 
@@ -78,7 +76,6 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          timeout: 100s
           script: |
             cd /var/www/tracker
             ./app serve -p :3030

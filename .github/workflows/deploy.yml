@@ -76,5 +76,4 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            cd /var/www/tracker
-            ./app serve -p :3030
+            sudo systemctl restart tracker.service

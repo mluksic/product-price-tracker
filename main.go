@@ -9,9 +9,13 @@ import (
 )
 
 func main() {
-	viper.SetConfigFile(".env")
-	err := viper.ReadInConfig() // Find and read the config file
-	if err != nil {             // Handle errors reading the config file
+	dir, err := os.Getwd()
+	if err != nil {
+		panic(fmt.Errorf("unable to get working dir %s", err))
+	}
+	viper.SetConfigFile(dir + "/.env")
+	err = viper.ReadInConfig() // Find and read the config file
+	if err != nil {            // Handle errors reading the config file
 		panic(fmt.Errorf("fatal error config file: %w", err))
 	}
 

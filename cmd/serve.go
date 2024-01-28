@@ -15,9 +15,6 @@ var serveCmd = &cobra.Command{
 	Long:    "Start HTTP server for an tracker app",
 	Aliases: []string{"s"},
 	Run: func(cmd *cobra.Command, args []string) {
-		//listenAddr := flag.String("listenAddr", ":3000", "the server port")
-		//flag.Parse()
-
 		config := api.NewConfig().WithListenAddr(Port).WithId(1)
 		server := api.NewServer(config)
 

@@ -105,7 +105,7 @@ func (s *Server) handleGetProductPrices(w http.ResponseWriter, r *http.Request) 
 		"IntToFloat": util.IntToFloat,
 	}
 
-	tmpl, err := template.New(tmplFile).Funcs(funcMap).ParseFiles("templates/" + tmplFile)
+	tmpl, err := template.New(tmplFile).Funcs(funcMap).ParseFiles("views/" + tmplFile)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -190,7 +190,7 @@ func (s *Server) handleIndexPage(w http.ResponseWriter, r *http.Request) {
 		"IntToFloat": util.IntToFloat,
 	}
 
-	tmpl, err := template.New(tmplFile).Funcs(funcMap).ParseFiles("templates/" + tmplFile)
+	tmpl, err := template.New(tmplFile).Funcs(funcMap).ParseFiles("views/" + tmplFile)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

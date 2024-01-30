@@ -1,0 +1,15 @@
+package product
+
+import "github.com/mluksic/product-price-tracker/types"
+import "github.com/mluksic/product-price-tracker/views/layout"
+
+templ Show(products []types.Product) {
+    @layout.Base() {
+        <ul class="bg-amber-500">
+        for _, product := range products {
+            <li class="text-yellow-700">{product.Name}</li>
+            <li>{product.Url}</li>"
+        }
+        </ul>
+    }
+}

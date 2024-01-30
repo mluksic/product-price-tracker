@@ -3,11 +3,13 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
 	"github.com/mluksic/product-price-tracker/scraper"
 	"github.com/mluksic/product-price-tracker/storage"
 	"github.com/mluksic/product-price-tracker/types"
 	"github.com/mluksic/product-price-tracker/util"
+	view "github.com/mluksic/product-price-tracker/views/product"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -61,6 +63,9 @@ func (c Config) WithStorage(s storage.Storer) Config {
 }
 func (s *Server) Start() error {
 	r := chi.NewRouter()
+
+	fs := http.FileServer(http.Dir("views"))
+	r.Handle("/views/*", http.StripPrefix("/views/", fs))
 
 	r.Get("/", s.handleIndexPage)
 
@@ -184,28 +189,13 @@ func (s *Server) handleGetProducts(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleIndexPage(w http.ResponseWriter, r *http.Request) {
-	var tmplFile = "index.html"
-	// add template functions
-	funcMap := template.FuncMap{
-		"IntToFloat": util.IntToFloat,
-	}
-
-	tmpl, err := template.New(tmplFile).Funcs(funcMap).ParseFiles("views/" + tmplFile)
+	products, err := s.Config.Storage.GetProducts()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	products, _ := s.Config.Storage.GetProducts()
-	tmplData := map[string]any{
-		"products": products,
-	}
-
-	err = tmpl.Execute(w, tmplData)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	templ.Handler(view.Show(products)).ServeHTTP(w, r)
 }
 
 func (s *Server) handleScrapeProductPrices(w http.ResponseWriter, r *http.Request) {

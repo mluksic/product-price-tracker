@@ -1,0 +1,16 @@
+package layout
+
+templ Base() {
+    <html>
+        @head()
+        <body class="text-3xl font-bold underline">
+        {children...}
+        </body>
+    </html>
+}
+
+templ head() {
+    <head>
+        <link rel="stylesheet" href="/views/tailwind.css" />
+    </head>
+}

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
+	"github.com/mluksic/product-price-tracker/handlers"
 	"github.com/mluksic/product-price-tracker/scraper"
 	"github.com/mluksic/product-price-tracker/storage"
 	"github.com/mluksic/product-price-tracker/types"
@@ -69,9 +70,12 @@ func (s *Server) Start() error {
 
 	r.Get("/", s.handleIndexPage)
 
+	// handlers
+	productHandler := handlers.NewProductHandler(s.Config.Storage)
+
 	// routes for "products" resource
 	r.Route("/products", func(r chi.Router) {
-		r.Get("/", s.handleGetProducts)
+		r.Get("/", productHandler.HandleIndex)
 		r.Post("/", s.handleCreateProduct)
 
 		// routes for "products/{Id}"

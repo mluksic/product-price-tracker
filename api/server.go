@@ -180,18 +180,6 @@ func (s *Server) handleProductDeletion(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (s *Server) handleGetProducts(w http.ResponseWriter, r *http.Request) {
-	products, err := s.Config.Storage.GetProducts()
-	if err != nil {
-		WriteJson(w, http.StatusBadRequest, ApiError{
-			Error:  "Unable to get products from the DB",
-			Detail: err.Error()})
-		return
-	}
-
-	WriteJson(w, http.StatusOK, products)
-}
-
 func (s *Server) handleIndexPage(w http.ResponseWriter, r *http.Request) {
 	products, err := s.Config.Storage.GetProducts()
 	if err != nil {

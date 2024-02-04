@@ -4,13 +4,14 @@ templ Base() {
     <html>
         @head()
         <body>
-        {children...}
+            {children...}
         </body>
     </html>
 }
 
 templ head() {
     <head>
-        <link rel="stylesheet" href="/views/tailwind.css" />
+        <link rel="stylesheet" href="/views/css/tailwind.css" />
+        <script src="/views/js/htmx.min.js"></script>
     </head>
 }

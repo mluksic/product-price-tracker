@@ -2,11 +2,14 @@ package product
 
 import "github.com/mluksic/product-price-tracker/types"
 import "github.com/mluksic/product-price-tracker/views/layout"
-import "fmt"
+
 
 templ Show(products []types.Product) {
 	@layout.Base() {
-		@table(products)
+	    <div class="m-6">
+            <h3 class="flex items-center text-4xl font-extrabold py-6 no-underline">Products</h3>
+            @table(products)
+	    </div>
 	}
 }
 
@@ -22,13 +25,13 @@ templ table(products []types.Product) {
 						URL
 					</th>
 					<th scope="col" class="px-6 py-3">
-						Is tracked
+						Tracked
 					</th>
 					<th scope="col" class="px-6 py-3">
-						Created at
+						Created
 					</th>
 					<th scope="col" class="px-6 py-3">
-						Updated at
+						Updated
 					</th>
 					<th scope="col" class="px-6 py-3">
 						Actions
@@ -45,31 +48,40 @@ templ table(products []types.Product) {
 							{ product.Url }
 						</td>
 						<td class="px-6 py-4">
-							<label class="relative inline-flex items-center cursor-pointer">
-								<input type="checkbox" value="" class="sr-only peer" hx-put={ fmt.Sprintf("products/%d/track", product.ID) } checked/>
-								<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-							</label>
+						    if product.IsTracked {
+						        @greenSign()
+						    } else {
+						        @redSign()
+						    }
 						</td>
 						<td class="px-6 py-4">
-							{ product.CreatedAt.Format("2006-01-02 15:04:05") }
+							{ product.CreatedAt.Format("2006-01-02") }
 						</td>
 						<td class="px-6 py-4">
-							{ product.UpdatedAt.Format("2006-01-02 15:04:05") }
+							{ product.UpdatedAt.Format("2006-01-02") }
 						</td>
 						<td class="px-6 py-4">
-							<a hx-get={ fmt.Sprintf("products/%d", product.ID) } hx-target="#product-prices" class="text-white text-sm bg-blue-700 focus:outline-none hover:bg-blue-800 rounded-md px-5 py-2 mx-2">
- 								Show
-							</a>
-                            <a hx-post={ fmt.Sprintf("products/%d/scrape", product.ID) } hx-target="#product-prices" hx-swap="innerHTML scroll:bottom" class="text-white text-sm bg-blue-700 focus:outline-none hover:bg-blue-800 rounded-md px-5 py-2 mx-2">
-								Scrape
-							</a>
-							<a hx-delete={ fmt.Sprintf("products/%d", product.ID) } hx-target="closest tr" hx-swap="outerHTML swap:1s" class="text-white text-sm bg-blue-700 focus:outline-none hover:bg-blue-800 rounded-md px-5 py-2 mx-2">
-								Delete
-							</a>
+						    <button class="focus:ring-2 focus:ring-offset-2 focus:ring-red-300 text-sm leading-none text-gray-600 py-3 px-5 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none">View</button>
 						</td>
 					</tr>
 				}
 			</tbody>
 		</table>
 	</div>
+}
+
+templ greenSign() {
+    <span class="flex justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+        </svg>
+    </span>
+}
+
+templ redSign() {
+    <span class="flex justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+    </span>
 }

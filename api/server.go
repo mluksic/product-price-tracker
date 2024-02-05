@@ -134,17 +134,13 @@ func (s *Server) handleGetProductPrices(w http.ResponseWriter, r *http.Request) 
 }
 
 func (s *Server) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
-	var req types.CreateProductRequest
-	err := json.NewDecoder(r.Body).Decode(&req)
+	err := r.ParseForm()
 	if err != nil {
-		WriteJson(w, http.StatusBadRequest, ApiError{
-			Error:  "Unable to decode request body",
-			Detail: err.Error(),
-		})
+		http.Error(w, "Could not parse form", http.StatusInternalServerError)
 		return
 	}
 
-	p := types.NewProduct(req.Name, req.Url)
+	p := types.NewProduct(r.PostForm.Get("name"), r.PostForm.Get("url"))
 	err = s.Config.Storage.CreateProduct(p)
 	if err != nil {
 		WriteJson(w, http.StatusInternalServerError, ApiError{

@@ -136,21 +136,18 @@ func (s *Server) handleGetProductPrices(w http.ResponseWriter, r *http.Request) 
 func (s *Server) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		http.Error(w, "Could not parse form", http.StatusInternalServerError)
+		templ.Handler(view.ItemCreatedAlert(false, fmt.Sprintf("There was an issue parsing the form - %s", err.Error())))
 		return
 	}
 
-	p := types.NewProduct(r.PostForm.Get("name"), r.PostForm.Get("url"))
+	p := types.NewProduct(r.PostFormValue("name"), r.PostFormValue("url"))
 	err = s.Config.Storage.CreateProduct(p)
 	if err != nil {
-		WriteJson(w, http.StatusInternalServerError, ApiError{
-			Error:  "Unable to create product in the DB",
-			Detail: err.Error(),
-		})
+		templ.Handler(view.ItemCreatedAlert(false, fmt.Sprintf("Unable to create new product price in the DB - %s", err.Error())))
 		return
 	}
 
-	WriteJson(w, http.StatusCreated, p)
+	templ.Handler(view.ItemCreatedAlert(true, "You are successfully tracking new product price")).ServeHTTP(w, r)
 }
 
 func (s *Server) handleProductDeletion(w http.ResponseWriter, r *http.Request) {

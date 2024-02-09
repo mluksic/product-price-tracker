@@ -246,7 +246,7 @@ func (s *Server) handleToggleProductTracking(w http.ResponseWriter, r *http.Requ
 		})
 		return
 	}
-	WriteJson(w, http.StatusOK, map[string]string{"message": "successfully toggled product tracking"})
+	templ.Handler(view.ItemCreatedAlert(true, "Your action has been saved")).ServeHTTP(w, r)
 }
 
 func WriteJson(w http.ResponseWriter, status int, msg any) {

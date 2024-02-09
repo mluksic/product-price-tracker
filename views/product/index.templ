@@ -7,8 +7,9 @@ import "fmt"
 
 templ Show(products []types.Product) {
 	@layout.Base() {
-	    <div id="alert"></div>
 	    <div class="mx-8 my-10">
+            <div id="alert" class="mb-5"></div>
+
 	        <div class="flex justify-between">
 	            <div class="pb-7" >
 	                <h3 class="text-4xl font-extrabold">Products</h3>
@@ -46,7 +47,7 @@ templ Show(products []types.Product) {
                                   </div>
                               </div>
 
-                              <button hx-post="products" hx-target="#alert" hx-on::after-request="modal.close()" type="submit" class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                              <button hx-post="products" hx-target="#alert" hx-on::after-request="modal.close(); setTimeout(function () {document.getElementById('alert').remove();}, 5000);" type="submit" class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                   @plusSign()
                                    Track
                               </button>

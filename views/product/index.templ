@@ -35,7 +35,7 @@ templ Show(products []types.Product) {
                           </div>
 
                           <!-- Modal body -->
-                          <form class="p-4 md:p-5">
+                          <form class="p-4 md:p-5" name="form-creation" hx-on::after-request="this.reset()">
                               <div class="grid gap-4 mb-4 grid-cols-2">
                                   <div class="col-span-2">
                                       <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
@@ -47,7 +47,7 @@ templ Show(products []types.Product) {
                                   </div>
                               </div>
 
-                              <button hx-post="products" hx-target="#alert" hx-on::after-request="modal.close(); setTimeout(function () {document.getElementById('alert').remove();}, 5000);" type="submit" class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                              <button hx-post="products" hx-target="#alert" hx-on::after-request="modal.close(); setTimeout(function () {document.getElementById('alert-inner').remove();}, 5000);" type="submit" class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                   @plusSign()
                                    Track
                               </button>
@@ -124,6 +124,7 @@ templ table(products []types.Product) {
 		</table>
 	</div>
 }
+
 templ actionButtons(product types.Product) {
     <button hx-get={ fmt.Sprintf("products/%d", product.ID) } class="focus:ring-2 focus:ring-offset-2 focus:ring-red-300 text-sm leading-none text-gray-600 py-3 px-5 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none">View</button>
     <button hx-put={ fmt.Sprintf("products/%d/scrape", product.ID) } class="focus:ring-2 focus:ring-offset-2 focus:ring-red-300 text-sm leading-none text-blue-600 py-3 px-5 bg-blue-100 rounded hover:bg-blue-200 focus:outline-none">Scrape</button>
@@ -134,6 +135,7 @@ templ actionButtons(product types.Product) {
     }
     <button hx-delete={ fmt.Sprintf("products/%d", product.ID) } hx-confirm="Are you sure?" hx-target="closest tr" hx-swap="outerHTML swap:0.5s" class="focus:ring-2 focus:ring-offset-2 focus:ring-red-300 text-sm leading-none text-red-600 py-3 px-5 bg-red-100 rounded hover:bg-red-200 focus:outline-none">Delete</button>
 }
+
 templ greenSign() {
     <span class="flex justify-center">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
@@ -156,12 +158,12 @@ templ plusSign() {
 
 templ ItemCreatedAlert(success bool, msg string) {
     if success {
-        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg">
+        <div id="alert-inner" class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg">
             <p class="text-lg font-semibold">Success!</p>
             <p>{ msg }</p>
         </div>
     } else {
-        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg">
+        <div id="alert-inner" class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg">
             <p class="text-lg font-semibold">Failed!</p>
             <p>Ohh no, something went wrong - { msg }</p>
         </div>

@@ -147,6 +147,7 @@ func (s *Server) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Hx-Trigger", "product-added")
 	templ.Handler(view.ItemCreatedAlert(true, "You are successfully tracking new product price")).ServeHTTP(w, r)
 }
 

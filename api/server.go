@@ -9,9 +9,7 @@ import (
 	"github.com/mluksic/product-price-tracker/scraper"
 	"github.com/mluksic/product-price-tracker/storage"
 	"github.com/mluksic/product-price-tracker/types"
-	"github.com/mluksic/product-price-tracker/util"
 	view "github.com/mluksic/product-price-tracker/views/product"
-	"html/template"
 	"net/http"
 	"strconv"
 	"time"
@@ -93,44 +91,16 @@ func (s *Server) Start() error {
 func (s *Server) handleGetProductPrices(w http.ResponseWriter, r *http.Request) {
 	productId, err := getId(r)
 	if err != nil {
-		WriteJson(w, http.StatusBadRequest, ApiError{
-			Error:  "There was an error fetching query param",
-			Detail: err.Error(),
-		})
+		templ.Handler(view.ItemCreatedAlert(false, fmt.Sprintf("Unable to fetch product prices: %s", err.Error())))
 		return
 	}
 	prices, err := s.Config.Storage.GetProductPrices(productId)
 	if err != nil {
-		WriteJson(w, http.StatusInternalServerError, ApiError{
-			Error:  "Unable to fetch product prices",
-			Detail: err.Error(),
-		})
+		templ.Handler(view.ItemCreatedAlert(false, fmt.Sprintf("Unable to fetch product prices: %s", err.Error())))
 		return
 	}
 
-	var tmplFile = "product_prices.html"
-	// add template functions
-	funcMap := template.FuncMap{
-		"IntToFloat": util.IntToFloat,
-	}
-
-	tmpl, err := template.New(tmplFile).Funcs(funcMap).ParseFiles("views/" + tmplFile)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	tmplData := map[string]any{
-		"prices": prices,
-	}
-
-	err = tmpl.Execute(w, tmplData)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	//WriteJson(w, http.StatusOK, prices)
+	templ.Handler(view.ProductPricesTable(prices)).ServeHTTP(w, r)
 }
 
 func (s *Server) handleCreateProduct(w http.ResponseWriter, r *http.Request) {

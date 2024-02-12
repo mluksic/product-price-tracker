@@ -61,10 +61,11 @@ templ Show(products []types.Product) {
             <div>
                 @table(products)
             </div>
+	        <div id="product-prices">
+
+	        </div>
 	    </div>
 
-	    <div id="product-form">
-	    </div>
 	}
 }
 
@@ -126,7 +127,7 @@ templ table(products []types.Product) {
 }
 
 templ actionButtons(product types.Product) {
-    <button hx-get={ fmt.Sprintf("products/%d", product.ID) } class="focus:ring-2 focus:ring-offset-2 focus:ring-red-300 text-sm leading-none text-gray-600 py-3 px-5 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none">View</button>
+    <button hx-get={ fmt.Sprintf("products/%d", product.ID) } hx-target="#product-prices" hx-swap="innerHTML show:top" class="focus:ring-2 focus:ring-offset-2 focus:ring-red-300 text-sm leading-none text-gray-600 py-3 px-5 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none">View</button>
     <button hx-put={ fmt.Sprintf("products/%d/scrape", product.ID) } class="focus:ring-2 focus:ring-offset-2 focus:ring-red-300 text-sm leading-none text-blue-600 py-3 px-5 bg-blue-100 rounded hover:bg-blue-200 focus:outline-none">Scrape</button>
     if product.IsTracked {
         <button hx-put={ fmt.Sprintf("products/%d/track", product.ID) } hx-target="#alert" hx-on::after-request="setTimeout(function () {document.getElementById('alert').remove();}, 5000);"class="focus:ring-2 focus:ring-offset-2 focus:ring-yellow-300 text-sm leading-none text-yellow-600 py-3 px-5 bg-yellow-100 rounded hover:bg-yellow-200 focus:outline-none">Un-track</button>
@@ -168,4 +169,28 @@ templ ItemCreatedAlert(success bool, msg string) {
             <p>Ohh no, something went wrong - { msg }</p>
         </div>
     }
+}
+
+templ ProductPricesTable(productPrices []types.ProductPrice) {
+
+    <div class="pb-7" >
+        <h3 class="text-4xl font-extrabold">Product prices</h3>
+    </div>
+
+    <table class="w-full table-auto border-collapse">
+        <thead>
+        <tr>
+            <th class="px-4 py-2 bg-gray-200 text-left">Price</th>
+            <th class="px-4 py-2 bg-gray-200 text-left">Fetched at</th>
+        </tr>
+        </thead>
+        <tbody>
+        for _, price := range productPrices {
+            <tr class="border-t border-gray-200">
+                <td class="px-4 py-2">{ string(price.Price) } €</td>
+                <td class="px-4 py-2">{ price.FetchedAt.Format("2006-01-02 15:04:05")}</td>
+            </tr>
+        }
+        </tbody>
+    </table>
 }

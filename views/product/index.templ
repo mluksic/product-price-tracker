@@ -128,7 +128,7 @@ templ table(products []types.Product) {
 
 templ actionButtons(product types.Product) {
     <button hx-get={ fmt.Sprintf("products/%d", product.ID) } hx-target="#product-prices" hx-swap="innerHTML show:top" class="focus:ring-2 focus:ring-offset-2 focus:ring-red-300 text-sm leading-none text-gray-600 py-3 px-5 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none">View</button>
-    <button hx-put={ fmt.Sprintf("products/%d/scrape", product.ID) } class="focus:ring-2 focus:ring-offset-2 focus:ring-red-300 text-sm leading-none text-blue-600 py-3 px-5 bg-blue-100 rounded hover:bg-blue-200 focus:outline-none">Scrape</button>
+    <button hx-post={ fmt.Sprintf("products/%d/scrape", product.ID) } class="focus:ring-2 focus:ring-offset-2 focus:ring-red-300 text-sm leading-none text-blue-600 py-3 px-5 bg-blue-100 rounded hover:bg-blue-200 focus:outline-none">Scrape</button>
     if product.IsTracked {
         <button hx-put={ fmt.Sprintf("products/%d/track", product.ID) } hx-target="#alert" hx-on::after-request="setTimeout(function () {document.getElementById('alert').remove();}, 5000);"class="focus:ring-2 focus:ring-offset-2 focus:ring-yellow-300 text-sm leading-none text-yellow-600 py-3 px-5 bg-yellow-100 rounded hover:bg-yellow-200 focus:outline-none">Un-track</button>
     } else {
@@ -172,7 +172,6 @@ templ ItemCreatedAlert(success bool, msg string) {
 }
 
 templ ProductPricesTable(productPrices []types.ProductPrice) {
-
     <div class="pb-7" >
         <h3 class="text-4xl font-extrabold">Product prices</h3>
     </div>

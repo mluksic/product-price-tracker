@@ -12,6 +12,7 @@ import (
 	view "github.com/mluksic/product-price-tracker/views/product"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -172,9 +173,16 @@ func (s *Server) handleScrapeProductPrices(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	amazonScraper := scraper.NewAmazonScraper(s.Config.Storage)
+	var targetScraper scraper.Scraper
+	if strings.Contains(product.Url, "amazon") {
+		targetScraper = scraper.NewAmazonScraper(s.Config.Storage)
+	} else if strings.Contains(product.Url, "nepremicnine") {
+		targetScraper = scraper.NewNepremicnineScraper(s.Config.Storage)
+	} else if strings.Contains(product.Url, "mimovrste") {
+		targetScraper = scraper.NewMimovrsteScraper(s.Config.Storage)
+	}
 
-	productVariants, err := amazonScraper.Scrape([]string{product.Url})
+	productVariants, err := targetScraper.Scrape([]string{product.Url})
 	if err != nil {
 		WriteJson(w, http.StatusInternalServerError, ApiError{
 			Error:  "There was an error scraping the product",

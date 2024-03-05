@@ -31,6 +31,7 @@ func (scraper MimovrsteScraper) Scrape(urls []string) ([]types.ProductVariant, e
 		priceStr = strings.ReplaceAll(priceStr, "\n", "")
 		priceStr = strings.ReplaceAll(priceStr, " ", "")
 		priceStr = strings.Replace(priceStr, "\u00A0", "", -1)
+		priceStr = strings.Replace(priceStr, ",", "", -1)
 
 		product := types.ProductVariant{Price: util.PriceToCents(priceStr)}
 		products = append(products, product)

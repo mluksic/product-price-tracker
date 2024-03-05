@@ -13,6 +13,7 @@ import "bytes"
 import "github.com/mluksic/product-price-tracker/types"
 import "github.com/mluksic/product-price-tracker/views/layout"
 import "fmt"
+import "github.com/mluksic/product-price-tracker/util"
 
 func Show(products []types.Product) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
@@ -610,7 +611,7 @@ func ProductPricesTable(productPrices []types.ProductPrice) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var42 string = string(price.Price)
+			var templ_7745c5c3_Var42 string = util.CentsToEuros(price.Price)
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var42))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

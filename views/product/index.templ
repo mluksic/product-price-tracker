@@ -3,6 +3,7 @@ package product
 import "github.com/mluksic/product-price-tracker/types"
 import "github.com/mluksic/product-price-tracker/views/layout"
 import "fmt"
+import "github.com/mluksic/product-price-tracker/util"
 
 
 templ Show(products []types.Product) {
@@ -186,7 +187,7 @@ templ ProductPricesTable(productPrices []types.ProductPrice) {
         <tbody>
         for _, price := range productPrices {
             <tr class="border-t border-gray-200">
-                <td class="px-4 py-2">{ string(price.Price) } €</td>
+                <td class="px-4 py-2">{ util.CentsToEuros(price.Price) } €</td>
                 <td class="px-4 py-2">{ price.FetchedAt.Format("2006-01-02 15:04:05")}</td>
             </tr>
         }

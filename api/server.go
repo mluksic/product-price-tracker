@@ -9,7 +9,7 @@ import (
 	"github.com/mluksic/product-price-tracker/scraper"
 	"github.com/mluksic/product-price-tracker/storage"
 	"github.com/mluksic/product-price-tracker/types"
-	view "github.com/mluksic/product-price-tracker/views/product"
+	"github.com/mluksic/product-price-tracker/views"
 	"net/http"
 	"strconv"
 	"strings"
@@ -92,34 +92,34 @@ func (s *Server) Start() error {
 func (s *Server) handleGetProductPrices(w http.ResponseWriter, r *http.Request) {
 	productId, err := getId(r)
 	if err != nil {
-		templ.Handler(view.ItemCreatedAlert(false, fmt.Sprintf("Unable to fetch product prices: %s", err.Error())))
+		templ.Handler(views.ItemCreatedAlert(false, fmt.Sprintf("Unable to fetch product prices: %s", err.Error())))
 		return
 	}
 	prices, err := s.Config.Storage.GetProductPrices(productId)
 	if err != nil {
-		templ.Handler(view.ItemCreatedAlert(false, fmt.Sprintf("Unable to fetch product prices: %s", err.Error())))
+		templ.Handler(views.ItemCreatedAlert(false, fmt.Sprintf("Unable to fetch product prices: %s", err.Error())))
 		return
 	}
 
-	templ.Handler(view.ProductPricesTable(prices)).ServeHTTP(w, r)
+	templ.Handler(views.ProductPricesTable(prices)).ServeHTTP(w, r)
 }
 
 func (s *Server) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		templ.Handler(view.ItemCreatedAlert(false, fmt.Sprintf("There was an issue parsing the form - %s", err.Error())))
+		templ.Handler(views.ItemCreatedAlert(false, fmt.Sprintf("There was an issue parsing the form - %s", err.Error())))
 		return
 	}
 
 	p := types.NewProduct(r.PostFormValue("name"), r.PostFormValue("url"))
 	err = s.Config.Storage.CreateProduct(p)
 	if err != nil {
-		templ.Handler(view.ItemCreatedAlert(false, fmt.Sprintf("Unable to create new product price in the DB - %s", err.Error())))
+		templ.Handler(views.ItemCreatedAlert(false, fmt.Sprintf("Unable to create new product price in the DB - %s", err.Error())))
 		return
 	}
 
 	w.Header().Set("Hx-Trigger", "product-added")
-	templ.Handler(view.ItemCreatedAlert(true, "You are successfully tracking new product price")).ServeHTTP(w, r)
+	templ.Handler(views.ItemCreatedAlert(true, "You are successfully tracking new product price")).ServeHTTP(w, r)
 }
 
 func (s *Server) handleProductDeletion(w http.ResponseWriter, r *http.Request) {
@@ -152,7 +152,7 @@ func (s *Server) handleIndexPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	templ.Handler(view.Show(products)).ServeHTTP(w, r)
+	templ.Handler(views.Show(products)).ServeHTTP(w, r)
 }
 
 func (s *Server) handleScrapeProductPrices(w http.ResponseWriter, r *http.Request) {
@@ -225,7 +225,7 @@ func (s *Server) handleToggleProductTracking(w http.ResponseWriter, r *http.Requ
 		})
 		return
 	}
-	templ.Handler(view.ItemCreatedAlert(true, "Your action has been saved")).ServeHTTP(w, r)
+	templ.Handler(views.ItemCreatedAlert(true, "Your action has been saved")).ServeHTTP(w, r)
 }
 
 func WriteJson(w http.ResponseWriter, status int, msg any) {

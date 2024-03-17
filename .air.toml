@@ -1,10 +1,10 @@
 root = "."
 testdata_dir = "testdata"
-tmp_dir = "tmp"
+tmp_dir = "bin"
 
 [build]
-  bin = "./tmp/main serve -p :3030"
-  cmd = "templ generate && go build -o ./tmp/main ."
+  cmd = "go build -o ./bin/main ."
+  bin = "./bin/main serve -p :3030"
   delay = 1
   exclude_dir = ["assets", "tmp", "vendor", "testdata", "node_modules"]
   exclude_file = []

@@ -1,0 +1,18 @@
+package views
+
+templ Base() {
+    <html>
+        @head()
+        <body>
+            <h1 class="text-3xl font-bold underline">asdfasdfasdf</h1>
+            {children...}
+        </body>
+    </html>
+}
+
+templ head() {
+    <head>
+        <link rel="stylesheet" href="/public/styles.css" />
+        <script src="/public/htmx.min.js"></script>
+    </head>
+}

@@ -64,8 +64,8 @@ func (c Config) WithStorage(s storage.Storer) Config {
 func (s *Server) Start() error {
 	r := chi.NewRouter()
 
-	fs := http.FileServer(http.Dir("views"))
-	r.Handle("/views/*", http.StripPrefix("/views/", fs))
+	fs := http.FileServer(http.Dir("public"))
+	r.Handle("/public/*", http.StripPrefix("/public/", fs))
 
 	r.Get("/", s.handleIndexPage)
 

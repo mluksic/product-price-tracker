@@ -20,4 +20,10 @@ tidy:
 build-prod:
 	env GOOS=linux GOARCH=amd64 go build -o bin/main
 
+tailwind:
+	@npx tailwindcss -i views/css/styles.css -o /public/styles.css
+
+templ:
+	@templ generate --proxy=http://localhost:3030 --watch
+
 .PHONY: build, run, test, tidy

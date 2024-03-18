@@ -3,6 +3,7 @@ module github.com/mluksic/product-price-tracker
 go 1.22
 
 require (
+	github.com/a-h/templ v0.2.598
 	github.com/go-chi/chi/v5 v5.0.10
 	github.com/gocolly/colly v1.2.0
 	github.com/jackc/pgx/v5 v5.5.1
@@ -13,7 +14,6 @@ require (
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.1 // indirect
-	github.com/a-h/templ v0.2.598 // indirect
 	github.com/andybalholm/cascadia v1.3.2 // indirect
 	github.com/antchfx/htmlquery v1.3.0 // indirect
 	github.com/antchfx/xmlquery v1.3.17 // indirect

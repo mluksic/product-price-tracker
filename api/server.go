@@ -92,34 +92,34 @@ func (s *Server) Start() error {
 func (s *Server) handleGetProductPrices(w http.ResponseWriter, r *http.Request) {
 	productId, err := getId(r)
 	if err != nil {
-		_ = views.ItemCreatedAlert(false, fmt.Sprintf("Unable to fetch product prices: %s", err.Error())).Render(r.Context(), w)
+		templ.Handler(views.ItemCreatedAlert(false, fmt.Sprintf("Unable to fetch product prices: %s", err.Error()))).ServeHTTP(w, r)
 		return
 	}
 	prices, err := s.Config.Storage.GetProductPrices(productId)
 	if err != nil {
-		_ = views.ItemCreatedAlert(false, fmt.Sprintf("Unable to fetch product prices: %s", err.Error())).Render(r.Context(), w)
+		templ.Handler(views.ItemCreatedAlert(false, fmt.Sprintf("Unable to fetch product prices: %s", err.Error()))).ServeHTTP(w, r)
 		return
 	}
 
-	_ = views.ProductPricesTable(prices).Render(r.Context(), w)
+	templ.Handler(views.ProductPricesTable(prices)).ServeHTTP(w, r)
 }
 
 func (s *Server) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		_ = views.ItemCreatedAlert(false, fmt.Sprintf("There was an issue parsing the form - %s", err.Error())).Render(r.Context(), w)
+		templ.Handler(views.ItemCreatedAlert(false, fmt.Sprintf("There was an issue parsing the form - %s", err.Error()))).ServeHTTP(w, r)
 		return
 	}
 
 	p := types.NewProduct(r.PostFormValue("name"), r.PostFormValue("url"))
 	err = s.Config.Storage.CreateProduct(p)
 	if err != nil {
-		_ = views.ItemCreatedAlert(false, fmt.Sprintf("Unable to create new product price in the DB - %s", err.Error())).Render(r.Context(), w)
+		templ.Handler(views.ItemCreatedAlert(false, fmt.Sprintf("Unable to create new product price in the DB - %s", err.Error()))).ServeHTTP(w, r)
 		return
 	}
 
 	w.Header().Set("Hx-Trigger", "product-added")
-	_ = views.ItemCreatedAlert(true, "You are successfully tracking new product price").Render(r.Context(), w)
+	templ.Handler(views.ItemCreatedAlert(true, "You are successfully tracking new product price")).ServeHTTP(w, r)
 }
 
 func (s *Server) handleProductDeletion(w http.ResponseWriter, r *http.Request) {

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/a-h/templ"
 	"github.com/mluksic/product-price-tracker/storage"
 	"github.com/mluksic/product-price-tracker/views"
 	"net/http"
@@ -19,5 +20,5 @@ func NewProductHandler(s storage.Storer) ProductHandler {
 func (h ProductHandler) HandleIndex(w http.ResponseWriter, r *http.Request) {
 	products, _ := h.S.GetProducts()
 
-	_ = views.Show(products).Render(r.Context(), w)
+	templ.Handler(views.Show(products)).ServeHTTP(w, r)
 }

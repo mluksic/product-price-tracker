@@ -21,7 +21,7 @@ build-prod:
 	env GOOS=linux GOARCH=amd64 go build -o bin/main
 
 tailwind:
-	@npx tailwindcss -i views/css/styles.css -o /public/styles.css
+	@npx tailwindcss -i views/css/styles.css -o public/styles.css --watch
 
 templ:
 	@templ generate --proxy=http://localhost:3030 --watch

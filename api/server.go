@@ -92,34 +92,34 @@ func (s *Server) Start() error {
 func (s *Server) handleGetProductPrices(w http.ResponseWriter, r *http.Request) {
 	productId, err := getId(r)
 	if err != nil {
-		views.ItemCreatedAlert(false, fmt.Sprintf("Unable to fetch product prices: %s", err.Error())).Render(r.Context(), w)
+		_ = views.ItemCreatedAlert(false, fmt.Sprintf("Unable to fetch product prices: %s", err.Error())).Render(r.Context(), w)
 		return
 	}
 	prices, err := s.Config.Storage.GetProductPrices(productId)
 	if err != nil {
-		views.ItemCreatedAlert(false, fmt.Sprintf("Unable to fetch product prices: %s", err.Error())).Render(r.Context(), w)
+		_ = views.ItemCreatedAlert(false, fmt.Sprintf("Unable to fetch product prices: %s", err.Error())).Render(r.Context(), w)
 		return
 	}
 
-	views.ProductPricesTable(prices).Render(r.Context(), w)
+	_ = views.ProductPricesTable(prices).Render(r.Context(), w)
 }
 
 func (s *Server) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		views.ItemCreatedAlert(false, fmt.Sprintf("There was an issue parsing the form - %s", err.Error())).Render(r.Context(), w)
+		_ = views.ItemCreatedAlert(false, fmt.Sprintf("There was an issue parsing the form - %s", err.Error())).Render(r.Context(), w)
 		return
 	}
 
 	p := types.NewProduct(r.PostFormValue("name"), r.PostFormValue("url"))
 	err = s.Config.Storage.CreateProduct(p)
 	if err != nil {
-		views.ItemCreatedAlert(false, fmt.Sprintf("Unable to create new product price in the DB - %s", err.Error())).Render(r.Context(), w)
+		_ = views.ItemCreatedAlert(false, fmt.Sprintf("Unable to create new product price in the DB - %s", err.Error())).Render(r.Context(), w)
 		return
 	}
 
 	w.Header().Set("Hx-Trigger", "product-added")
-	views.ItemCreatedAlert(true, "You are successfully tracking new product price").Render(r.Context(), w)
+	_ = views.ItemCreatedAlert(true, "You are successfully tracking new product price").Render(r.Context(), w)
 }
 
 func (s *Server) handleProductDeletion(w http.ResponseWriter, r *http.Request) {

@@ -19,5 +19,5 @@ func NewProductHandler(s storage.Storer) ProductHandler {
 func (h ProductHandler) HandleIndex(w http.ResponseWriter, r *http.Request) {
 	products, _ := h.S.GetProducts()
 
-	views.Show(products).Render(r.Context(), w)
+	_ = views.Show(products).Render(r.Context(), w)
 }

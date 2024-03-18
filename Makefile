@@ -26,4 +26,7 @@ tailwind:
 templ:
 	@templ generate --proxy=http://localhost:3030 --watch
 
+lint:
+	@golangci-lint run ./...
+
 .PHONY: build, run, test, tidy

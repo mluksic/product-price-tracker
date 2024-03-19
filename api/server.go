@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
-	"github.com/mluksic/product-price-tracker/handlers"
 	"github.com/mluksic/product-price-tracker/scraper"
 	"github.com/mluksic/product-price-tracker/storage"
 	"github.com/mluksic/product-price-tracker/types"
@@ -62,31 +61,32 @@ func (c Config) WithStorage(s storage.Storer) Config {
 	return c
 }
 func (s *Server) Start() error {
-	r := chi.NewRouter()
+	//r := chi.NewRouter()
 
-	fs := http.FileServer(http.Dir("public"))
-	r.Handle("/public/*", http.StripPrefix("/public/", fs))
+	http.Handle("/", templ.Handler(views.Home()))
+	//fs := http.FileServer(http.Dir("public"))
+	//r.Handle("/public/*", http.StripPrefix("/public/", fs))
 
-	r.Get("/", templ.Handler(views.Home()).ServeHTTP)
+	// r.Get("/", templ.Handler(views.Home()).ServeHTTP)
 
 	// handlers
-	productHandler := handlers.NewProductHandler(s.Config.Storage)
+	//productHandler := handlers.NewProductHandler(s.Config.Storage)
 
 	// routes for "products" resource
-	r.Route("/products", func(r chi.Router) {
-		r.Get("/", productHandler.HandleIndex)
-		r.Post("/", s.handleCreateProduct)
+	//r.Route("/products", func(r chi.Router) {
+	//	r.Get("/", productHandler.HandleIndex)
+	//	r.Post("/", s.handleCreateProduct)
+	//
+	//	// routes for "products/{Id}"
+	//	r.Route("/{Id}", func(r chi.Router) {
+	//		r.Get("/", s.handleGetProductPrices)
+	//		r.Post("/scrape", s.handleScrapeProductPrices)
+	//		r.Put("/track", s.handleToggleProductTracking)
+	//		r.Delete("/", s.handleProductDeletion)
+	//	})
+	//})
 
-		// routes for "products/{Id}"
-		r.Route("/{Id}", func(r chi.Router) {
-			r.Get("/", s.handleGetProductPrices)
-			r.Post("/scrape", s.handleScrapeProductPrices)
-			r.Put("/track", s.handleToggleProductTracking)
-			r.Delete("/", s.handleProductDeletion)
-		})
-	})
-
-	return http.ListenAndServe(s.Config.ListenAddr, r)
+	return http.ListenAndServe(s.Config.ListenAddr, nil)
 }
 
 func (s *Server) handleGetProductPrices(w http.ResponseWriter, r *http.Request) {

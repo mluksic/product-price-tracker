@@ -68,7 +68,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: "app,public/*"
+          source: "app,public/*,views/*"
           target: "/var/www/tracker"
 
       - name: SSH into EC2 instance and restart service

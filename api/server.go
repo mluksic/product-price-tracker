@@ -67,7 +67,7 @@ func (s *Server) Start() error {
 	fs := http.FileServer(http.Dir("public"))
 	r.Handle("/public/*", http.StripPrefix("/public/", fs))
 
-	r.Get("/", s.handleIndexPage)
+	r.Get("/", templ.Handler(views.Home()).ServeHTTP)
 
 	// handlers
 	productHandler := handlers.NewProductHandler(s.Config.Storage)
@@ -145,15 +145,16 @@ func (s *Server) handleProductDeletion(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (s *Server) handleIndexPage(w http.ResponseWriter, r *http.Request) {
-	products, err := s.Config.Storage.GetProducts()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+// func (s *Server) handleIndexPage(w http.ResponseWriter, r *http.Request) {
+//products, err := s.Config.Storage.GetProducts()
+//if err != nil {
+//	http.Error(w, err.Error(), http.StatusInternalServerError)
+//	return
+//}
 
-	templ.Handler(views.Show(products)).ServeHTTP(w, r)
-}
+// templ.Handler(views.Show(products)).ServeHTTP(w, r)
+
+// }
 
 func (s *Server) handleScrapeProductPrices(w http.ResponseWriter, r *http.Request) {
 	id, err := getId(r)

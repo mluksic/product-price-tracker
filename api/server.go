@@ -10,6 +10,7 @@ import (
 	"github.com/mluksic/product-price-tracker/storage"
 	"github.com/mluksic/product-price-tracker/types"
 	"github.com/mluksic/product-price-tracker/views"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
@@ -67,7 +68,12 @@ func (s *Server) Start() error {
 	fs := http.FileServer(http.Dir("public"))
 	r.Handle("/public/*", http.StripPrefix("/public/", fs))
 
-	r.Get("/", templ.Handler(views.Home()).ServeHTTP)
+	r.Get("/", templ.Handler(views.Home(), templ.WithErrorHandler(func(r *http.Request, err error) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusBadRequest)
+			slog.Debug(fmt.Sprintf("rendering error: %s", err))
+		})
+	})).ServeHTTP)
 
 	// handlers
 	productHandler := handlers.NewProductHandler(s.Config.Storage)

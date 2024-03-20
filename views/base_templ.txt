@@ -1,4 +1,0 @@
-<html>
-<body>
-</body></html>
-<head><link rel=\"stylesheet\" href=\"/public/styles.css\"><script src=\"/public/htmx.min.js\"></script></head>

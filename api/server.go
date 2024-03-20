@@ -70,7 +70,7 @@ func (s *Server) Start() error {
 	r.Get("/", templ.Handler(views.Home(), templ.WithErrorHandler(func(r *http.Request, err error) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte(err.Error()))
+			_, _ = w.Write([]byte(err.Error()))
 		})
 	})).ServeHTTP)
 

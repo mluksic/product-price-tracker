@@ -10,7 +10,6 @@ import (
 	"github.com/mluksic/product-price-tracker/storage"
 	"github.com/mluksic/product-price-tracker/types"
 	"github.com/mluksic/product-price-tracker/views"
-	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
@@ -71,7 +70,7 @@ func (s *Server) Start() error {
 	r.Get("/", templ.Handler(views.Home(), templ.WithErrorHandler(func(r *http.Request, err error) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusBadRequest)
-			slog.Debug(fmt.Sprintf("rendering error: %s", err))
+			w.Write([]byte(err.Error()))
 		})
 	})).ServeHTTP)
 

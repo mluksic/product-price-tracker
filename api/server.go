@@ -155,17 +155,6 @@ func (s *Server) handleProductDeletion(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// func (s *Server) handleIndexPage(w http.ResponseWriter, r *http.Request) {
-//products, err := s.Config.Storage.GetProducts()
-//if err != nil {
-//	http.Error(w, err.Error(), http.StatusInternalServerError)
-//	return
-//}
-
-// templ.Handler(views.Show(products)).ServeHTTP(w, r)
-
-// }
-
 func (s *Server) handleScrapeProductPrices(w http.ResponseWriter, r *http.Request) {
 	id, err := getId(r)
 	if err != nil {

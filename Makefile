@@ -23,8 +23,11 @@ build-prod:
 tailwind:
 	@npx tailwindcss -i views/css/styles.css -o public/styles.css --watch
 
-templ:
+templ-w:
 	@templ generate --proxy=http://localhost:3030 --watch
+
+templ:
+	@templ generate --proxy=http://localhost:3030
 
 lint:
 	@golangci-lint run ./...

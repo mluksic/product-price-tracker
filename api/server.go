@@ -67,15 +67,10 @@ func (s *Server) Start() error {
 	fs := http.FileServer(http.Dir("public"))
 	r.Handle("/public/*", http.StripPrefix("/public/", fs))
 
-	r.Get("/", templ.Handler(views.Home(), templ.WithErrorHandler(func(r *http.Request, err error) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusBadRequest)
-			_, _ = w.Write([]byte(err.Error()))
-		})
-	})).ServeHTTP)
-
 	// handlers
 	productHandler := handlers.NewProductHandler(s.Config.Storage)
+
+	r.HandleFunc("/", s.handleIndexPage)
 
 	// routes for "products" resource
 	r.Route("/products", func(r chi.Router) {
@@ -92,6 +87,16 @@ func (s *Server) Start() error {
 	})
 
 	return http.ListenAndServe(s.Config.ListenAddr, r)
+}
+
+func (s *Server) handleIndexPage(w http.ResponseWriter, r *http.Request) {
+	products, err := s.Config.Storage.GetProducts()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	templ.Handler(views.Show(products)).ServeHTTP(w, r)
 }
 
 func (s *Server) handleGetProductPrices(w http.ResponseWriter, r *http.Request) {

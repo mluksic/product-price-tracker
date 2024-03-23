@@ -28,14 +28,31 @@ App has two main commands. (run `make run` to get more info)
 
 Copy, rename, and adjust [.env.template](./.env.template) file so that the app connects to your Postgres DB
 
-### Run the following command to start the CLI app
+### Run the following command to start the HTTP server through CLI (port 3030)
 ```bash
-$ make run
+$ make serve
 ```
 
 ### Run the following command to use live reload (requires [Air](https://github.com/cosmtrek/air) to be installed)
 ```bash
 $ air
+```
+## Run Templ (watch mode) to automatically generate templates
+
+```bash
+$ make templ-w
+```
+
+## Run TailwindCSS (watch mode)
+
+```bash
+$ make tailwind
+```
+
+## Run  (watch mode)
+
+```bash
+$ make tailwind
 ```
 
 ## Build
@@ -52,7 +69,7 @@ $ make tidy
 
 ## Live reload
 
-Project uses [Air](https://github.com/cosmtrek/air) for better & faster developer experience
+Project uses [Air](https://github.com/cosmtrek/air) for better & faster developer experience. Check out [air.toml](air.toml) for setup
 
 ## Using Goose to handle DB migrations
 
@@ -94,11 +111,13 @@ $ goose -dir storage/migrations down
 ```
 
 ## Deploy
+
 The project uses Github Actions for CI/CD. Open [.deploy.yml](.github/workflows/deploy.yml) file to see the setup.
 
 Push to `main` branch will automatically run CI/CD pipeline and deploy new changes to server.
 
 ## Test
+
 (TBD)
 
 ## Contributors

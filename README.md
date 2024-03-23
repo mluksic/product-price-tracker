@@ -32,6 +32,7 @@ Copy, rename, and adjust [.env.template](./.env.template) file so that the app c
 ```bash
 $ make run
 ```
+
 ### Run the following command to use live reload (requires [Air](https://github.com/cosmtrek/air) to be installed)
 ```bash
 $ air
@@ -93,7 +94,9 @@ $ goose -dir storage/migrations down
 ```
 
 ## Deploy
-(TBD)
+The project uses Github Actions for CI/CD. Open [.deploy.yml](.github/workflows/deploy.yml) file to see the setup.
+
+Push to `main` branch will automatically run CI/CD pipeline and deploy new changes to server.
 
 ## Test
 (TBD)

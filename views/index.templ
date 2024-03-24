@@ -1,14 +1,15 @@
 package views
 
-import "github.com/mluksic/product-price-tracker/types"
 import "fmt"
 import "github.com/mluksic/product-price-tracker/util"
+import "github.com/mluksic/product-price-tracker/types"
 
 
 templ Show(products []types.Product) {
 	@Page(true) {
 	    <div class="mx-8 my-10">
-            <div id="alert" class="mb-5"></div>
+            <div id="alert" class="mb-5">
+            </div>
 
 	        <div class="flex justify-between">
 	            <div class="pb-7" >

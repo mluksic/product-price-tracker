@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
+	"github.com/mluksic/product-price-tracker/components"
 	"github.com/mluksic/product-price-tracker/scraper"
 	"github.com/mluksic/product-price-tracker/types"
 	"github.com/mluksic/product-price-tracker/views"
@@ -16,12 +17,12 @@ import (
 func (h *Handler) HandleGetProductPrices(w http.ResponseWriter, r *http.Request) {
 	productId, err := getId(r)
 	if err != nil {
-		templ.Handler(views.ItemCreatedAlert(false, fmt.Sprintf("Unable to fetch product prices: %s", err.Error()))).ServeHTTP(w, r)
+		templ.Handler(components.ItemCreatedAlert(false, fmt.Sprintf("Unable to fetch product prices: %s", err.Error()))).ServeHTTP(w, r)
 		return
 	}
 	prices, err := h.s.GetProductPrices(productId)
 	if err != nil {
-		templ.Handler(views.ItemCreatedAlert(false, fmt.Sprintf("Unable to fetch product prices: %s", err.Error()))).ServeHTTP(w, r)
+		templ.Handler(components.ItemCreatedAlert(false, fmt.Sprintf("Unable to fetch product prices: %s", err.Error()))).ServeHTTP(w, r)
 		return
 	}
 
@@ -31,13 +32,13 @@ func (h *Handler) HandleGetProductPrices(w http.ResponseWriter, r *http.Request)
 func (h *Handler) HandleScrapeProductPrices(w http.ResponseWriter, r *http.Request) {
 	id, err := getId(r)
 	if err != nil {
-		templ.Handler(views.ItemCreatedAlert(false, fmt.Sprintf("Unable to fetch request query param: %s", err.Error()))).ServeHTTP(w, r)
+		templ.Handler(components.ItemCreatedAlert(false, fmt.Sprintf("Unable to fetch request query param: %s", err.Error()))).ServeHTTP(w, r)
 		return
 	}
 
 	product, err := h.s.GetProduct(id)
 	if err != nil {
-		templ.Handler(views.ItemCreatedAlert(false, fmt.Sprintf("Unablet to fetch product: %s", err.Error()))).ServeHTTP(w, r)
+		templ.Handler(components.ItemCreatedAlert(false, fmt.Sprintf("Unablet to fetch product: %s", err.Error()))).ServeHTTP(w, r)
 		return
 	}
 
@@ -52,7 +53,7 @@ func (h *Handler) HandleScrapeProductPrices(w http.ResponseWriter, r *http.Reque
 
 	productVariants, err := targetScraper.Scrape([]string{product.Url})
 	if err != nil {
-		templ.Handler(views.ItemCreatedAlert(false, fmt.Sprintf("Unable to scrape: %s", err.Error()))).ServeHTTP(w, r)
+		templ.Handler(components.ItemCreatedAlert(false, fmt.Sprintf("Unable to scrape: %s", err.Error()))).ServeHTTP(w, r)
 		return
 	}
 
@@ -62,28 +63,28 @@ func (h *Handler) HandleScrapeProductPrices(w http.ResponseWriter, r *http.Reque
 		err := h.s.CreateProductPrice(productPrice)
 
 		if err != nil {
-			templ.Handler(views.ItemCreatedAlert(false, fmt.Sprintf("Unable to create product price: %s", err.Error()))).ServeHTTP(w, r)
+			templ.Handler(components.ItemCreatedAlert(false, fmt.Sprintf("Unable to create product price: %s", err.Error()))).ServeHTTP(w, r)
 			return
 		}
 	}
 
-	templ.Handler(views.ItemCreatedAlert(true, "You've successfully scraped product")).ServeHTTP(w, r)
+	templ.Handler(components.ItemCreatedAlert(true, "You've successfully scraped product")).ServeHTTP(w, r)
 }
 
 func (h *Handler) HandleToggleProductTracking(w http.ResponseWriter, r *http.Request) {
 	id, err := getId(r)
 	if err != nil {
-		templ.Handler(views.ItemCreatedAlert(false, fmt.Sprintf("Unable to fetch request query param: %s", err.Error()))).ServeHTTP(w, r)
+		templ.Handler(components.ItemCreatedAlert(false, fmt.Sprintf("Unable to fetch request query param: %s", err.Error()))).ServeHTTP(w, r)
 		return
 	}
 
 	err = h.s.ToggleProductTracking(id)
 	if err != nil {
-		templ.Handler(views.ItemCreatedAlert(false, fmt.Sprintf("Unable to toggle tracking: %s", err.Error()))).ServeHTTP(w, r)
+		templ.Handler(components.ItemCreatedAlert(false, fmt.Sprintf("Unable to toggle tracking: %s", err.Error()))).ServeHTTP(w, r)
 		return
 	}
 
-	templ.Handler(views.ItemCreatedAlert(true, "Your action has been saved")).ServeHTTP(w, r)
+	templ.Handler(components.ItemCreatedAlert(true, "Your action has been saved")).ServeHTTP(w, r)
 }
 
 func getId(r *http.Request) (int, error) {

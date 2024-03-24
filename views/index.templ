@@ -6,7 +6,7 @@ import "github.com/mluksic/product-price-tracker/util"
 
 
 templ Show(products []types.Product) {
-	@Base() {
+	@Page(true) {
 	    <div class="mx-8 my-10">
             <div id="alert" class="mb-5"></div>
 

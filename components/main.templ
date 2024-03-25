@@ -93,7 +93,7 @@ templ ProductTableItem(product types.Product) {
             { product.Name }
         </th>
         <td class="px-6 py-4">
-            { product.Url }
+            <a href={ templ.URL(product.Url) } target="_blank">{ product.Url }</a>
         </td>
         <td class="px-6 py-4">
             <input type="checkbox" name="tracking" checked?={ product.IsTracked } hx-put={ fmt.Sprintf("products/%d/track", product.ID) } hx-target="closest tr" hx-swap="outerHTML"/>

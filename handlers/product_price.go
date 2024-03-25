@@ -84,7 +84,8 @@ func (h *Handler) HandleToggleProductTracking(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	templ.Handler(components.ItemCreatedAlert(true, "Your action has been saved")).ServeHTTP(w, r)
+	product, _ := h.s.GetProduct(id)
+	templ.Handler(components.ProductTableItem(product)).ServeHTTP(w, r)
 }
 
 func getId(r *http.Request) (int, error) {

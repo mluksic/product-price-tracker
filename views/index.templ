@@ -3,7 +3,6 @@ package views
 import "github.com/mluksic/product-price-tracker/util"
 import "github.com/mluksic/product-price-tracker/types"
 import "github.com/mluksic/product-price-tracker/components"
-import "fmt"
 
 templ Show(products []types.Product) {
 	@Page(true) {
@@ -54,26 +53,7 @@ templ table(products []types.Product) {
             </thead>
             <tbody>
                 for _, product := range products {
-                    <tr id={ fmt.Sprintf("product-%d", product.ID) } class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            { product.Name }
-                        </th>
-                        <td class="px-6 py-4">
-                            { product.Url }
-                        </td>
-                        <td class="px-6 py-4">
-                            <input type="checkbox" name="tracking" checked?={ product.IsTracked } />
-                        </td>
-                        <td class="px-6 py-4">
-                            { product.CreatedAt.Format("2006-01-02") }
-                        </td>
-                        <td class="px-6 py-4">
-                            { product.UpdatedAt.Format("2006-01-02") }
-                        </td>
-                        <td class="px-6 py-4">
-                            @components.ActionButtons(product)
-                        </td>
-                    </tr>
+                    @components.ProductTableItem(product)
                 }
             </tbody>
         </table>

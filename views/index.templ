@@ -15,14 +15,11 @@ templ Show(products []types.Product) {
 	                <h3 class="text-4xl font-extrabold">Products</h3>
 	            </div>
 
-	            <div>
-                    @components.Modal()
-	            </div>
+                @components.Modal()
 	        </div>
 
-            <div>
-                @table(products)
-            </div>
+            @table(products)
+
 	        <div id="product-prices">
 	        </div>
 	    </div>
@@ -30,60 +27,60 @@ templ Show(products []types.Product) {
 }
 
 templ table(products []types.Product) {
-	<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-		<table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-			<thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-				<tr>
-					<th scope="col" class="px-6 py-3">
-						Product name
-					</th>
-					<th scope="col" class="px-6 py-3">
-						URL
-					</th>
-					<th scope="col" class="px-6 py-3">
-						Tracked
-					</th>
-					<th scope="col" class="px-6 py-3">
-						Created
-					</th>
-					<th scope="col" class="px-6 py-3">
-						Updated
-					</th>
-					<th scope="col" class="px-6 py-3">
-						Actions
-					</th>
-				</tr>
-			</thead>
-			<tbody>
-				for _, product := range products {
-					<tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-						<th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-							{ product.Name }
-						</th>
-						<td class="px-6 py-4">
-							{ product.Url }
-						</td>
-						<td class="px-6 py-4">
-						    if product.IsTracked {
-						        @components.GreenSign()
-						    } else {
-						        @components.RedSign()
-						    }
-						</td>
-						<td class="px-6 py-4">
-							{ product.CreatedAt.Format("2006-01-02") }
-						</td>
-						<td class="px-6 py-4">
-							{ product.UpdatedAt.Format("2006-01-02") }
-						</td>
-						<td class="px-6 py-4">
-						    @components.ActionButtons(product)
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-3">
+                        Product name
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        URL
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Tracked
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Created
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Updated
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                for _, product := range products {
+                    <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            { product.Name }
+                        </th>
+                        <td class="px-6 py-4">
+                            { product.Url }
                         </td>
-					</tr>
-				}
-			</tbody>
-		</table>
-	</div>
+                        <td class="px-6 py-4">
+                            if product.IsTracked {
+                                @components.GreenSign()
+                            } else {
+                                @components.RedSign()
+                            }
+                        </td>
+                        <td class="px-6 py-4">
+                            { product.CreatedAt.Format("2006-01-02") }
+                        </td>
+                        <td class="px-6 py-4">
+                            { product.UpdatedAt.Format("2006-01-02") }
+                        </td>
+                        <td class="px-6 py-4">
+                            @components.ActionButtons(product)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
 
 templ ProductPricesTable(productPrices []types.ProductPrice) {

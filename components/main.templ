@@ -89,5 +89,5 @@ templ ActionButtons(product types.Product) {
     } else {
         <button hx-put={ fmt.Sprintf("products/%d/track", product.ID) } hx-target="#alert"  hx-on::after-request="setTimeout(function () {document.getElementById('alert').remove();}, 5000);"class="focus:ring-2 focus:ring-offset-2 focus:ring-yellow-300 text-sm leading-none text-yellow-600 py-3 px-5 bg-yellow-100 rounded hover:bg-yellow-200 focus:outline-none">Track</button>
     }
-    <button hx-delete={ fmt.Sprintf("products/%d", product.ID) } hx-confirm="Are you sure?" hx-target="closest tr" hx-swap="outerHTML swap:0.5s" class="focus:ring-2 focus:ring-offset-2 focus:ring-red-300 text-sm leading-none text-red-600 py-3 px-5 bg-red-100 rounded hover:bg-red-200 focus:outline-none">Delete</button>
+    <button hx-delete={ fmt.Sprintf("products/%d", product.ID) } hx-confirm="Are you sure?" hx-target={ fmt.Sprintf("#product-%d", product.ID) }  hx-swap="delete" class="focus:ring-2 focus:ring-offset-2 focus:ring-red-300 text-sm leading-none text-red-600 py-3 px-5 bg-red-100 rounded hover:bg-red-200 focus:outline-none">Delete</button>
 }

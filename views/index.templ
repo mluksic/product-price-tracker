@@ -62,11 +62,7 @@ templ table(products []types.Product) {
                             { product.Url }
                         </td>
                         <td class="px-6 py-4">
-                            if product.IsTracked {
-                                @components.GreenSign()
-                            } else {
-                                @components.RedSign()
-                            }
+                            <input type="checkbox" name="tracking" checked?={ product.IsTracked } />
                         </td>
                         <td class="px-6 py-4">
                             { product.CreatedAt.Format("2006-01-02") }

@@ -37,7 +37,7 @@ templ Modal() {
                       </div>
                   </div>
 
-                  <button hx-post="products" hx-target="#alert" hx-on::after-request="modal.close(); setTimeout(function () {document.getElementById('alert-inner').remove();}, 5000);" type="submit" class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                  <button hx-post="products" hx-target="next tbody" hx-swap="afterbegin" hx-on::after-request="modal.close()" type="submit" class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                       @PlusSign()
                        Track
                   </button>

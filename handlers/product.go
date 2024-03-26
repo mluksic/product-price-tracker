@@ -30,6 +30,8 @@ func (h *Handler) HandleCreateProduct(w http.ResponseWriter, r *http.Request) {
 		templ.Handler(components.ItemCreatedAlert(false, fmt.Sprintf("Unable to create new product price in the DB - %s", err.Error()))).ServeHTTP(w, r)
 		return
 	}
+
+	templ.Handler(components.ProductTableItem(*p)).ServeHTTP(w, r)
 }
 
 func (h *Handler) HandleProductDeletion(w http.ResponseWriter, r *http.Request) {
